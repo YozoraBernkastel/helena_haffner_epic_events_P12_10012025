@@ -1,0 +1,15 @@
+[tool.poetry]
+name = "helena-haffner-epic-events-p12-10012025"
+version = "0.1.0"
+description = ""
+authors = ["Featherine <helaena.haffner@gmail.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.12"
+peewee = "^3.17.8"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
