@@ -5,12 +5,18 @@ db = SqliteDatabase("database")
 
 class Collaborator(Model):
     username = CharField(max_length=150)
-    # todo ne pas oublier de crypter le mot de passe avant de l'envoyer en bdd !!!!!!!!!
+    # todo ne pas oublier de crypter le mot de passe avant de l'envoyer en bdd !!!!!!!!!
     password = CharField()
     role = CharField()
 
     # todo créer des fonctions liées au model (par exemple create, modif, etc) --
     #  des classMethod par exemple) pour facilter le code puisqu'on a tout au même endroit. Facilite notamment les choses lorsqu'on passe via le terminal !!
+
+    @classmethod
+    def find_collaborator(cls, username, password) -> object | None:
+        # todo comment gérer le fait que le mot de passe soit hashé ?
+        user = cls.get_or_none(username=username, password=password)
+        return user
 
     class Meta:
         database = db
