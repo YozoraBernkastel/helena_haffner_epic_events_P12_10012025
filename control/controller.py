@@ -4,7 +4,7 @@ from view.view import View
 class Controller:
     def __init__(self):
         self.user: Collaborator | None = None
-        # todo utilisateur persinstant, pour a utiliser JWToken (voir compte rendu)
+        # todo utilisateur persistant, pour a utiliser JWToken (voir compte rendu)
 
         self.init_db()
 
@@ -25,6 +25,7 @@ class Controller:
             if self.user is None:
                 print("Utilisateur ou mot de passe inconnu.")
 
+        # todo générer JWToken ici !! Possibilité de se déconnecter ? Comment ?
         print(f"{self.user.username = }")
 
         # todo penser à sauvegarder l'id de l'utilisateur par exemple.

@@ -10,3 +10,21 @@ class View:
         password = password
 
         return username, password
+
+    @staticmethod
+    def remember_me() -> bool:
+        choice: bool | None = None
+        while choice is None:
+            print("Se souvenir de vous ?")
+            print("tapez 1 pour oui")
+            print("tapez 2 pour non")
+            choice = input("")
+
+            if choice == "1":
+                return True
+            if choice == "2":
+                return False
+
+            choice = None
+
+
