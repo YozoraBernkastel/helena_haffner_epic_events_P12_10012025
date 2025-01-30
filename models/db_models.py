@@ -1,3 +1,4 @@
+import bcrypt
 from peewee import *
 from datetime import datetime
 
@@ -6,7 +7,7 @@ db = SqliteDatabase("database")
 class Collaborator(Model):
     username = CharField(max_length=150)
     # todo ne pas oublier de crypter le mot de passe avant de l'envoyer en bdd !!!!!!!!!
-    password = CharField()
+    password = BitField()
     role = CharField()
 
     # todo créer des fonctions liées au model (par exemple create, modif, etc) --
@@ -14,9 +15,12 @@ class Collaborator(Model):
 
     @classmethod
     def find_collaborator(cls, username, password) -> object | None:
-        # todo comment gérer le fait que le mot de passe soit hashé ?
-        user = cls.get_or_none(username=username, password=password)
-        return user
+        user = cls.get_or_none(username=username)
+        password = bytes(password, encoding="ascii")
+        if user is not None and bcrypt.checkpw(password, user.password):
+            return user
+
+        return None
 
     class Meta:
         database = db
@@ -45,9 +49,6 @@ class Contract(Model):
     last_update = DateTimeField(default=datetime.now())
 
     # todo regarder récap mentorat !!!
-
-    # todo quelle architecture utiliser ? MVC ??? Chercher autres possibilités histoire de se renseigner même si MVC
-    # todo surement mieux et plus simple (voir projet 4)
 
     class Meta:
         database = db
