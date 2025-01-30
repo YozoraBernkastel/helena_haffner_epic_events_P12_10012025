@@ -38,8 +38,5 @@ class Controller:
         if View.remember_me():
             JwtHelper.generate(self.user.id)
 
-        print(f"{self.user.username = }")
-        print(f"{self.user.role = }")
-
 
         # todo penser à sauvegarder l'id de l'utilisateur par exemple.
