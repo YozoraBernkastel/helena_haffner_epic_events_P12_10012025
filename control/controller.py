@@ -18,7 +18,6 @@ class Controller:
 
     def display_welcome_menu(self):
 
-        # Collaborator.create(username="fanola", password="fanola2", role="gestion")
         while self.user is None:
             username, password = View.connection()
             self.user = Collaborator.find_collaborator(username, password)
