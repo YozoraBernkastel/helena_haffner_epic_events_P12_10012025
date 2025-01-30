@@ -1,11 +1,11 @@
 import bcrypt
 from models.db_models import Collaborator, Client, Contract, Event
 from view.view import View
+from control.jwt_helper import JwtHelper
 
 class Controller:
     def __init__(self):
         self.user: Collaborator | None = None
-        # todo utilisateur persistant, pour a utiliser JWToken (voir compte rendu)
 
         self.init_db()
 
@@ -23,17 +23,23 @@ class Controller:
         hashed = bcrypt.hashpw(password=bytes(password, encoding="ascii"), salt=salt)
         return hashed
 
-    def display_welcome_menu(self):
+    @staticmethod
+    def create_jwt():
+        pass
 
+    def display_welcome_menu(self) -> None:
+        # if JwtHelper.decode_jwt(token)
         while self.user is None:
             username, password = View.connection()
             self.user = Collaborator.find_collaborator(username, password)
             if self.user is None:
                 print("Utilisateur ou mot de passe inconnu.")
 
-        # todo générer JWToken ici !! Possibilité de se déconnecter ? Comment ?
-        memorize: bool = View.remember_me()
+        if View.remember_me():
+            JwtHelper.generate(self.user.id)
+
         print(f"{self.user.username = }")
-        print(f"{memorize = }")
+        print(f"{self.user.role = }")
+
 
         # todo penser à sauvegarder l'id de l'utilisateur par exemple.

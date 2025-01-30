@@ -6,7 +6,6 @@ db = SqliteDatabase("database")
 
 class Collaborator(Model):
     username = CharField(max_length=150)
-    # todo ne pas oublier de crypter le mot de passe avant de l'envoyer en bdd !!!!!!!!!
     password = BitField()
     role = CharField()
 
@@ -17,6 +16,7 @@ class Collaborator(Model):
     def find_collaborator(cls, username, password) -> object | None:
         user = cls.get_or_none(username=username)
         password = bytes(password, encoding="ascii")
+
         if user is not None and bcrypt.checkpw(password, user.password):
             return user
 
