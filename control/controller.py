@@ -35,15 +35,15 @@ class Controller:
             print(f"{token = }")
 
     @staticmethod
-    def get_last_token():
+    def get_last_token() -> str:
         # todo remplacer le token en dur par une récupération dans un fichier (ini ?)
-        token = None
+        token = "temp"
 
         return token
 
     def display_welcome_menu(self) -> None:
-        token = self.get_last_token()
-        last_user_id = JwtHelper.decode_jwt(token)
+        token: str = self.get_last_token()
+        last_user_id: int = JwtHelper.decode_jwt(token)
 
         if last_user_id is not None:
             self.user = Collaborator.find_last_user_session(last_user_id)

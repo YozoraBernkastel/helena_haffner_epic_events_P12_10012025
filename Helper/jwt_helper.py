@@ -42,10 +42,10 @@ class JwtHelper:
         return jwt.encode(payload, secret, algorithm)
 
     @staticmethod
-    def decode_jwt(token: jwt) -> str | None:
+    def decode_jwt(token: jwt) -> int | None:
         try:
             secret, algorithm = JwtHelper.__load_jwt_detail()
             decoded_token = jwt.decode(token, secret, algorithm)
-            return decoded_token["user_id"]
+            return int(decoded_token["user_id"])
         except:
             return None

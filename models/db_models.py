@@ -21,8 +21,8 @@ class Collaborator(Model):
         return None
 
     @classmethod
-    def find_last_user_session(cls, user_id: str) -> object | None:
-        user = cls.get_or_none(id=int(user_id))
+    def find_last_user_session(cls, user_id: int) -> object | None:
+        user = cls.get_or_none(id=user_id)
 
         if user is not None:
             return user
