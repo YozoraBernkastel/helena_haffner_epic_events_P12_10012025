@@ -1,6 +1,7 @@
 import bcrypt
 from peewee import *
 from datetime import datetime
+from Helper.jwt_helper import JwtHelper
 
 db = SqliteDatabase("database")
 
@@ -9,15 +10,21 @@ class Collaborator(Model):
     password = BitField()
     role = CharField()
 
-    # todo créer des fonctions liées au model (par exemple create, modif, etc) --
-    #  des classMethod par exemple) pour facilter le code puisqu'on a tout au même endroit. Facilite notamment les choses lorsqu'on passe via le terminal !!
-
     @classmethod
     def find_collaborator(cls, username, password) -> object | None:
         user = cls.get_or_none(username=username)
         password = bytes(password, encoding="ascii")
 
         if user is not None and bcrypt.checkpw(password, user.password):
+            return user
+
+        return None
+
+    @classmethod
+    def find_last_user_session(cls, user_id: str) -> object | None:
+        user = cls.get_or_none(id=int(user_id))
+
+        if user is not None:
             return user
 
         return None
@@ -47,8 +54,6 @@ class Contract(Model):
     signed = BooleanField()
     creation_date = DateTimeField(default=datetime.now())
     last_update = DateTimeField(default=datetime.now())
-
-    # todo regarder récap mentorat !!!
 
     class Meta:
         database = db
