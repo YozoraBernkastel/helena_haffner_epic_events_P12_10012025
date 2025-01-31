@@ -36,25 +36,29 @@ class Controller:
 
     @staticmethod
     def get_last_token() -> str:
-        # todo remplacer le token en dur par une récupération dans un fichier (ini ?)
-        token = "temp"
+        # todo remplacer le token en dur par une récupération dans un fichier (txt ou dans une image par exemple)
+        token = "blabla"
 
         return token
+
+    @staticmethod
+    def find_last_user(last_user_id):
+        user = Collaborator.find_last_user_session(last_user_id)
+        is_user: bool = View.is_that_you(user.username)
+
+        return user if is_user else None
 
     def display_welcome_menu(self) -> None:
         token: str = self.get_last_token()
         last_user_id: int = JwtHelper.decode_jwt(token)
 
         if last_user_id is not None:
-            self.user = Collaborator.find_last_user_session(last_user_id)
+            self.user = self.find_last_user(last_user_id)
 
         if self.user is None:
             self.log_in()
-        else:
-            # todo demander à l'utilisateur s'il s'agit bien de lui probablement
-            pass
 
         assert self.user is not None
-        print(f"Bravo {self.user.username} !! Vous venez de vous connecter !!!!!")
+        print(f"Bonjour {self.user.username} !!")
 
 
