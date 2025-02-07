@@ -2,10 +2,12 @@ import bcrypt
 from models.db_models import Collaborator, Client, Contract, Event
 from view.view import View
 from Helper.jwt_helper import JwtHelper
+from models.picture_manipulation import PictureManipulation
 
 class Controller:
     def __init__(self):
         self.user: Collaborator | None = None
+        self.pitcure_manip = PictureManipulation()
 
         self.init_db()
 
@@ -32,12 +34,13 @@ class Controller:
 
         if View.remember_me():
             token = JwtHelper.generate_jwt(user_id=self.user.id)
+            self.pitcure_manip.crypt_token(token)
+
             print(f"{token = }")
 
     @staticmethod
     def get_last_token() -> str:
-        # todo remplacer le token en dur par une récupération dans un fichier (txt ou dans une image par exemple)
-        token = "blabla"
+        token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiMSIsImV4cCI6MTczODQ5MDY3MX0.YfH47ok4D-bs5SaSrGXQcCmTWl4CQrQcfT3WwbYbSM0"
 
         return token
 
