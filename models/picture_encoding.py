@@ -1,6 +1,7 @@
 from PIL import Image, ImageFile
 from os import path
 
+
 class PictureEncoding:
     def __init__(self):
         self.picture_1_path: str = "pictures/wallpaper_1.jpeg"
@@ -32,9 +33,35 @@ class PictureEncoding:
 
             yield tuple(pix)
 
+    @staticmethod
+    def shift(digit: int) -> str:
+        return str(digit << 7)
+
+    @staticmethod
+    def to_binary(str_digit: str) -> str:
+        return str(format(ord(str_digit), '6b'))
+
+    def compute_data_info(self, data: list) -> list:
+        shift_data_len = self.shift(len(data))
+        binary_data_len = self.to_binary(shift_data_len)
+
+        into_list: list = [[binary_data_len[i], binary_data_len[i + 1], binary_data_len[i + 2]] for i in
+                           range(0, len(binary_data_len), 3)]
+
+        temp = self.shift(len(into_list))
+        temp = self.to_binary(temp)
+        temp_list: list = [[temp[i], temp[i + 1], temp[i + 2]] for i in
+                           range(0, len(temp), 3)]
+        # à tester
+        temp_list.extend(into_list)
+
+        return temp_list
+
     def encoded_img(self, picture: ImageFile, data: list) -> None:
         width = picture.size[0]
         x, y = 0, 0
+
+        data_info: list = self.compute_data_info(data)
 
         for pix in self.mod_pix(picture.getdata(), data):
             picture.putpixel((x, y), pix)
@@ -79,7 +106,7 @@ class PictureEncoding:
 
     def convert_token_part(self, token_part: list) -> list[list[str]]:
         ascii_token: list[int] = [ord(letter) for letter in token_part]
-        shifted_token: list[str] = [str(digit << 7) for digit in ascii_token]
+        shifted_token: list[str] = [self.shift(digit) for digit in ascii_token]
         return self.list_of_binary(shifted_token)
 
     def crypt_token(self, token: str) -> None:
@@ -93,4 +120,3 @@ class PictureEncoding:
             binary_token.append(self.convert_token_part(token_part))
 
         self.picture_token_link(binary_token)
-
