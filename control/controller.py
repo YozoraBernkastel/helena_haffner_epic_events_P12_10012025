@@ -2,18 +2,19 @@ import bcrypt
 from models.db_models import Collaborator, Client, Contract, Event
 from view.view import View
 from Helper.jwt_helper import JwtHelper
-from models.encod_picture import PictureManipulation
+from models.picture_encoding import PictureEncoding
+from models.picture_decoding import PictureDecoding
 
 class Controller:
     def __init__(self):
         self.user: Collaborator | None = None
-        self.pitcure_manip = PictureManipulation()
+        self.picture_encoding = PictureEncoding()
+        self.picture_decoding = PictureDecoding()
 
         self.init_db()
 
     @staticmethod
     def init_db():
-        # todo if no db (file or table) --> need to check if each table exists ?
         Collaborator.create_table()
         Client.create_table()
         Contract.create_table()
@@ -34,15 +35,16 @@ class Controller:
 
         if View.remember_me():
             token = JwtHelper.generate_jwt(user_id=self.user.id)
-            self.pitcure_manip.crypt_token(token)
+            self.picture_encoding.crypt_token(token)
 
             print(f"{token = }")
 
-    @staticmethod
-    def get_last_token() -> str:
-        token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiMSIsImV4cCI6MTczODQ5MDY3MX0.YfH47ok4D-bs5SaSrGXQcCmTWl4CQrQcfT3WwbYbSM0"
+    def get_last_token(self) -> str:
+        # todo temporaire, le temps de finir picture_decoding
+        if self.picture_decoding.are_all_pictures_exists():
+            return "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiMSIsImV4cCI6MTczOTcxNDE3NH0.ZS0irDId_4nY6biJLbK6QaU_w5CXE5_Uc0rWGjfj9ko"
 
-        return token
+        return ""
 
     @staticmethod
     def find_last_user(last_user_id):

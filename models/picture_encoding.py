@@ -1,7 +1,7 @@
 from PIL import Image, ImageFile
 from os import path
 
-class PictureManipulation:
+class PictureEncoding:
     def __init__(self):
         self.picture_1_path: str = "pictures/wallpaper_1.jpeg"
         self.picture_2_path: str = "pictures/wallpaper_2.jpeg"
@@ -10,14 +10,14 @@ class PictureManipulation:
 
     @staticmethod
     def import_picture(picture_path: str):
-        if not path.exists(picture_path):
-            print("Impossible de sauvegarder le token")
-            return None
+        if path.exists(picture_path):
+            return Image.open(picture_path, "r")
 
-        return Image.open(picture_path, "r")
+        print("Impossible de sauvegarder le token")
+        return None
 
     @staticmethod
-    def mod_pix(picture_data, data):
+    def mod_pix(picture_data: list, data: list) -> tuple[int]:
 
         for three_num, pixel in zip(data, picture_data):
             pix: list = [p for p in pixel]
@@ -44,7 +44,7 @@ class PictureManipulation:
             else:
                 x += 1
 
-    def rework_picture(self, picture_path, data: str) -> None:
+    def rework_picture(self, picture_path: str, data: list) -> None:
         picture: ImageFile = self.import_picture(picture_path)
 
         if picture is not None:
@@ -56,15 +56,14 @@ class PictureManipulation:
             print()
 
             file_name, ext = picture_path.split(".")
-            new_extension = ".jpeg" if ext == "png" else ".png"
-            new_image_name = f"{file_name}_{new_extension}"
+            new_image_name = f"{file_name}_.{ext}"
             encoded_picture.save(new_image_name)
 
     def picture_token_link(self, binary_token: list) -> None:
         [self.rework_picture(picture, token) for picture, token in zip(self.pictures_list, binary_token)]
 
     @staticmethod
-    def str_to_binary(shifted_token: list[str]) -> list[list[str]]:
+    def list_of_binary(shifted_token: list[str]) -> list[list[str]]:
         binary_token = []
 
         for element in shifted_token:
@@ -78,10 +77,10 @@ class PictureManipulation:
 
         return binary_token
 
-    def convert_token_part(self, token_part) -> list[list[str]]:
+    def convert_token_part(self, token_part: list) -> list[list[str]]:
         ascii_token: list[int] = [ord(letter) for letter in token_part]
         shifted_token: list[str] = [str(digit << 7) for digit in ascii_token]
-        return self.str_to_binary(shifted_token)
+        return self.list_of_binary(shifted_token)
 
     def crypt_token(self, token: str) -> None:
         if not token:
