@@ -2,7 +2,7 @@ import bcrypt
 from models.db_models import Collaborator, Client, Contract, Event
 from view.view import View
 from Helper.jwt_helper import JwtHelper
-from models.picture_manipulation import PictureManipulation
+from models.encod_picture import PictureManipulation
 
 class Controller:
     def __init__(self):

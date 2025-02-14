@@ -50,6 +50,7 @@ class PictureManipulation:
         if picture is not None:
             encoded_picture = picture.copy()
             print(f"before {encoded_picture.getdata()[0] =}")
+            print(data[0])
             self.encoded_img(encoded_picture, data)
             print(f"before {encoded_picture.getdata()[0] =}")
             print()

@@ -29,6 +29,9 @@ share/python-wheels/
 *.egg
 MANIFEST
 .idea/
+save/
+*_.png
+*_.jpeg
 
 # PyInstaller
 #  Usually these files are written by a python script from a template
@@ -54,7 +57,6 @@ coverage.xml
 .hypothesis/
 .pytest_cache/
 cover/
-save/
 
 # Translations
 *.mo
@@ -125,7 +127,6 @@ celerybeat.pid
 *.sage.py
 
 # Environments
-.env
 .venv
 env/
 venv/
