@@ -2,7 +2,6 @@ import jwt
 import os
 import dotenv
 from datetime import timedelta, datetime, timezone
-from os import path
 
 
 class JwtHelper:

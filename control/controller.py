@@ -33,18 +33,12 @@ class Controller:
             if self.user is None:
                 print("Utilisateur ou mot de passe inconnu.")
 
-        if View.remember_me():
-            token = JwtHelper.generate_jwt(user_id=self.user.id)
+        if self.picture_encoding.are_all_pictures_exists() and View.remember_me():
+            # token = JwtHelper.generate_jwt(user_id=self.user.id)
+            token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiMSIsImV4cCI6MTc0MDMxNTE4MH0.u3ICyWMbSjsqdgqezPz4ftZ_oG-HiDb5gFVR_EM0-XE"
             self.picture_encoding.crypt_token(token)
 
             print(f"{token = }")
-
-    def get_last_token(self) -> str:
-        # todo temporaire, le temps de finir picture_decoding
-        if self.picture_decoding.are_all_pictures_exists():
-            return "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiMSIsImV4cCI6MTczOTcxNDE3NH0.ZS0irDId_4nY6biJLbK6QaU_w5CXE5_Uc0rWGjfj9ko"
-
-        return ""
 
     @staticmethod
     def find_last_user(last_user_id):
@@ -54,7 +48,7 @@ class Controller:
         return user if is_user else None
 
     def display_welcome_menu(self) -> None:
-        token: str = self.get_last_token()
+        token: str = self.picture_decoding.token_getter()
         last_user_id: int = JwtHelper.decode_jwt(token)
 
         if last_user_id is not None:

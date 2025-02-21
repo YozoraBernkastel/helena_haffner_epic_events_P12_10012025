@@ -1,27 +1,18 @@
-from PIL import Image, ImageFile
-from os import path
+from PIL import ImageFile, Image
+from models.picture_manipulation import PictureManipulation
 
 
-class PictureEncoding:
+class PictureEncoding(PictureManipulation):
     def __init__(self):
-        self.picture_1_path: str = "pictures/wallpaper_1.jpeg"
-        self.picture_2_path: str = "pictures/wallpaper_2.jpeg"
-        self.picture_3_path: str = "pictures/wallpaper_3.jpeg"
+        super().__init__()
         self.pictures_list: list = [self.picture_1_path, self.picture_2_path, self.picture_3_path]
-
-    @staticmethod
-    def import_picture(picture_path: str):
-        if path.exists(picture_path):
-            return Image.open(picture_path, "r")
-
-        print("Impossible de sauvegarder le token")
-        return None
 
     @staticmethod
     def mod_pix(picture_data: list, data: list) -> tuple[int]:
 
         for three_num, pixel in zip(data, picture_data):
             pix: list = [p for p in pixel]
+
             for i in range(len(pix)):
                 if three_num[i] == "0" and pix[i] % 2 != 0:
                     pix[i] -= 1
@@ -34,23 +25,20 @@ class PictureEncoding:
             yield tuple(pix)
 
     @staticmethod
-    def shift(digit: int) -> str:
-        return str(digit << 7)
-
-    @staticmethod
     def compute_data_info(data: list) -> list:
         binary_len: str = '{0:012b}'.format(len(data))
+
         return [[binary_len[i], binary_len[i + 1], binary_len[i + 2]] for i in
                 range(0, len(binary_len), 3)]
 
-    def encoded_img(self, picture: ImageFile, data: list) -> None:
+    def encoded_img(self, picture: ImageFile, data: list):
         width = picture.size[0]
         x, y = 0, 0
 
         data_info: list = self.compute_data_info(data)
-        complete_data = data_info + data
+        data_info.extend(data)
 
-        for pix in self.mod_pix(picture.getdata(), complete_data):
+        for pix in self.mod_pix(picture.getdata(), data_info):
             picture.putpixel((x, y), pix)
             if x == width - 1:
                 x = 0
@@ -58,16 +46,18 @@ class PictureEncoding:
             else:
                 x += 1
 
+        return picture
+
     def rework_picture(self, picture_path: str, data: list) -> None:
-        picture: ImageFile = self.import_picture(picture_path)
+        picture: Image = self.import_picture(picture_path)
 
         if picture is not None:
             encoded_picture = picture.copy()
-            self.encoded_img(encoded_picture, data)
+            encoded_picture = self.encoded_img(encoded_picture, data)
 
             file_name, ext = picture_path.split(".")
             new_image_name = f"{file_name}_.{ext}"
-            encoded_picture.save(new_image_name)
+            encoded_picture.save(new_image_name, quality=100, subsampling=0, optimize=False)
 
     def picture_token_link(self, binary_token: list) -> None:
         [self.rework_picture(picture, token_part) for picture, token_part in zip(self.pictures_list, binary_token)]
@@ -87,9 +77,15 @@ class PictureEncoding:
 
         return binary_token
 
+    @staticmethod
+    def shift(digit: int) -> str:
+        return str(digit << 7)
+
     def convert_token_part(self, token_part: list) -> list[list[str]]:
         ascii_token: list[int] = [ord(letter) for letter in token_part]
         shifted_token: list[str] = [self.shift(digit) for digit in ascii_token]
+        print(shifted_token[0])
+        # todo il faut sans doute ajouter la longueur pour décoder shifted token !!!
         return self.list_of_binary(shifted_token)
 
     def crypt_token(self, token: str) -> None:
