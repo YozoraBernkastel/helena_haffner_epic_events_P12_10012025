@@ -38,32 +38,19 @@ class PictureEncoding:
         return str(digit << 7)
 
     @staticmethod
-    def to_binary(str_digit: str) -> str:
-        return str(format(ord(str_digit), '6b'))
-
-    def compute_data_info(self, data: list) -> list:
-        shift_data_len = self.shift(len(data))
-        binary_data_len = self.to_binary(shift_data_len)
-
-        into_list: list = [[binary_data_len[i], binary_data_len[i + 1], binary_data_len[i + 2]] for i in
-                           range(0, len(binary_data_len), 3)]
-
-        temp = self.shift(len(into_list))
-        temp = self.to_binary(temp)
-        temp_list: list = [[temp[i], temp[i + 1], temp[i + 2]] for i in
-                           range(0, len(temp), 3)]
-        # à tester
-        temp_list.extend(into_list)
-
-        return temp_list
+    def compute_data_info(data: list) -> list:
+        binary_len: str = '{0:012b}'.format(len(data))
+        return [[binary_len[i], binary_len[i + 1], binary_len[i + 2]] for i in
+                range(0, len(binary_len), 3)]
 
     def encoded_img(self, picture: ImageFile, data: list) -> None:
         width = picture.size[0]
         x, y = 0, 0
 
         data_info: list = self.compute_data_info(data)
+        complete_data = data_info + data
 
-        for pix in self.mod_pix(picture.getdata(), data):
+        for pix in self.mod_pix(picture.getdata(), complete_data):
             picture.putpixel((x, y), pix)
             if x == width - 1:
                 x = 0
@@ -76,18 +63,14 @@ class PictureEncoding:
 
         if picture is not None:
             encoded_picture = picture.copy()
-            print(f"before {encoded_picture.getdata()[0] =}")
-            print(data[0])
             self.encoded_img(encoded_picture, data)
-            print(f"before {encoded_picture.getdata()[0] =}")
-            print()
 
             file_name, ext = picture_path.split(".")
             new_image_name = f"{file_name}_.{ext}"
             encoded_picture.save(new_image_name)
 
     def picture_token_link(self, binary_token: list) -> None:
-        [self.rework_picture(picture, token) for picture, token in zip(self.pictures_list, binary_token)]
+        [self.rework_picture(picture, token_part) for picture, token_part in zip(self.pictures_list, binary_token)]
 
     @staticmethod
     def list_of_binary(shifted_token: list[str]) -> list[list[str]]:
