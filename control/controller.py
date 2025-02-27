@@ -1,6 +1,9 @@
 import bcrypt
 from models.db_models import Collaborator, Client, Contract, Event
-from view.view import View
+from view.generic_view import View
+from view.management_view import ManagementView
+from view.sales_view import SalesView
+from view.support_view import SupportView
 from Helper.jwt_helper import JwtHelper
 from models.picture_encoding import PictureEncoding
 from models.picture_decoding import PictureDecoding
@@ -44,6 +47,22 @@ class Controller:
 
         return user if is_user else None
 
+    def management_path(self) -> None:
+        choice = ManagementView.menu()
+
+        if choice == "1":
+            ManagementView.users_db_menu()
+        elif choice == "2":
+            ManagementView.contracts_menu()
+        elif choice == "3":
+            ManagementView.events_menu()
+
+    def support_path(self):
+        pass
+
+    def sales_path(self):
+        pass
+
     def display_welcome_menu(self) -> None:
         token: str = self.picture_decoding.token_getter()
         last_user_id: int = JwtHelper.decode_jwt(token)
@@ -56,5 +75,18 @@ class Controller:
 
         assert self.user is not None
         print(f"Bonjour {self.user.username} !!")
+        print(self.user.role)
+
+        if self.user.role == "management":
+            self.management_path()
+        elif self.user.role == "support":
+            self.support_path()
+        elif self.user.role == "sales":
+            self.sales_path()
+        else:
+            print("Aucun accès aux données")
+
+
+
 
 
