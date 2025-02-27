@@ -1,5 +1,6 @@
 from PIL import Image
 from models.picture_manipulation import PictureManipulation
+from settings.settings import DATA_INFO_LEN, DOT
 
 
 class PictureDecoding(PictureManipulation):
@@ -22,42 +23,35 @@ class PictureDecoding(PictureManipulation):
         return int(temp, 2)
 
     def get_binary_string(self, data) -> int:
-        data_len: list = [data[pixel] for pixel in range(0, 4)]
+        data_len: list = [data[pixel] for pixel in range(0, DATA_INFO_LEN)]
 
         return self.convert_binary_to_int(data_len)
 
     def decoded_data(self, data_len: int, data) -> str:
-        digit_list: list = []
-        temp_list = []
-        blabla = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9"
-        print(len(blabla))
+        token_part: str = ""
 
-        for i in range(4, data_len + 4, 2):
-            digit: int = self.convert_binary_to_int([data[i], data[i + 1]])
-            if len(temp_list) == 5:
-                digit_list.append(temp_list)
-                temp_list = []
-            temp_list.append(digit)
-            # digit_list.append(digit)
+        for i in range(DATA_INFO_LEN, data_len + DATA_INFO_LEN, 10):
+            temp_list = [data[j] for j in range(i, i + 10)]
 
-        print(len(digit_list))
+            temp_str: str = ""
+            for y in range(0, len(temp_list), 2):
+                ascii_number: int = self.convert_binary_to_int([temp_list[y], temp_list[y + 1]])
+                temp_str = f"{temp_str}{chr(ascii_number)}"
 
-        return ""
+            token_part = f"{token_part}{chr(int(temp_str) >> self.shift_num)}"
 
+        return token_part
 
-    def get_binary_code(self, picture_path: str) -> str:
+    def get_decoded_token_parts(self, picture_path: str) -> str:
         picture: Image = self.import_picture(picture_path)
         data_len: int = self.get_binary_string(picture.getdata())
-        decoded_data: str = self.decoded_data(data_len, picture.getdata())
 
-        return ""
+        return self.decoded_data(data_len, picture.getdata())
 
     def token_decoder(self) -> str:
-        binary_token_parts: list = [self.get_binary_code(picture_path) for picture_path in self.pictures_list]
+        token_parts: list = [self.get_decoded_token_parts(picture_path) for picture_path in self.pictures_list]
 
-        token_parts_list: list = []
-
-        return ".".join(token_parts_list)
+        return DOT.join(token_parts)
 
     def token_getter(self) -> str:
         if not self.are_all_pictures_exists():

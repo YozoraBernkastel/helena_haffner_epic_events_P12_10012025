@@ -34,11 +34,8 @@ class Controller:
                 print("Utilisateur ou mot de passe inconnu.")
 
         if self.picture_encoding.are_all_pictures_exists() and View.remember_me():
-            # token = JwtHelper.generate_jwt(user_id=self.user.id)
-            token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiMSIsImV4cCI6MTc0MDMxNTE4MH0.u3ICyWMbSjsqdgqezPz4ftZ_oG-HiDb5gFVR_EM0-XE"
+            token = JwtHelper.generate_jwt(user_id=self.user.id)
             self.picture_encoding.crypt_token(token)
-
-            print(f"{token = }")
 
     @staticmethod
     def find_last_user(last_user_id):

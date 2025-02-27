@@ -7,13 +7,6 @@ from datetime import timedelta, datetime, timezone
 class JwtHelper:
 
     @staticmethod
-    def exists_or_create():
-        pass
-        # folder_path = EXPORT_FILE
-        # if not path.exists(folder_path):
-        #     os.makedirs(folder_path)
-
-    @staticmethod
     def export_token():
         pass
 

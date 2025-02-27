@@ -1,11 +1,13 @@
 from PIL import ImageFile, Image
 from models.picture_manipulation import PictureManipulation
+from settings.settings import MAX_ASCII_NUM, DATA_FORMAT, DATA_INFO_BINARY_FORMAT, DOT
 
 
 class PictureEncoding(PictureManipulation):
     def __init__(self):
         super().__init__()
         self.pictures_list: list = [self.picture_1_path, self.picture_2_path, self.picture_3_path]
+        self.ascii_length = len(str(MAX_ASCII_NUM << self.shift_num))
 
     @staticmethod
     def mod_pix(picture_data: list, data: list) -> tuple[int]:
@@ -26,7 +28,7 @@ class PictureEncoding(PictureManipulation):
 
     @staticmethod
     def compute_data_info(data: list) -> list:
-        binary_len: str = '{0:012b}'.format(len(data))
+        binary_len: str = DATA_INFO_BINARY_FORMAT.format(len(data))
 
         return [[binary_len[i], binary_len[i + 1], binary_len[i + 2]] for i in
                 range(0, len(binary_len), 3)]
@@ -55,7 +57,7 @@ class PictureEncoding(PictureManipulation):
             encoded_picture = picture.copy()
             encoded_picture = self.encoded_img(encoded_picture, data)
 
-            file_name, ext = picture_path.split(".")
+            file_name, ext = picture_path.split(DOT)
             new_image_name = f"{file_name}_.{ext}"
             encoded_picture.save(new_image_name, quality=100, subsampling=0, optimize=False)
 
@@ -68,7 +70,7 @@ class PictureEncoding(PictureManipulation):
 
         for element in shifted_token:
             for digit in element:
-                byte_str = str(format(ord(digit), '6b'))
+                byte_str = DATA_FORMAT.format(ord(digit))
                 into_list: list = [[byte_str[i], byte_str[i + 1], byte_str[i + 2]] for i in
                                    range(0, len(byte_str), 3)]
 
@@ -77,22 +79,25 @@ class PictureEncoding(PictureManipulation):
 
         return binary_token
 
-    @staticmethod
-    def shift(digit: int) -> str:
-        return str(digit << 7)
+    def shift(self, digit: int) -> str:
+        shifted = str(digit << self.shift_num)
+
+        for add_zero in range(0, self.ascii_length - len(shifted)):
+            shifted = f"0{shifted}"
+
+        return shifted
 
     def convert_token_part(self, token_part: list) -> list[list[str]]:
         ascii_token: list[int] = [ord(letter) for letter in token_part]
         shifted_token: list[str] = [self.shift(digit) for digit in ascii_token]
-        print(shifted_token[0])
-        # todo il faut sans doute ajouter la longueur pour décoder shifted token !!!
+
         return self.list_of_binary(shifted_token)
 
     def crypt_token(self, token: str) -> None:
         if not token:
             return None
 
-        split_token: list = token.split(".")
+        split_token: list = token.split(DOT)
         binary_token: list = []
 
         for token_part in split_token:

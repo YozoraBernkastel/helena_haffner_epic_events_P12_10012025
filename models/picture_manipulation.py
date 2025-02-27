@@ -7,6 +7,7 @@ class PictureManipulation:
         self.picture_1_path: str = "pictures/wallpaper_1.png"
         self.picture_2_path: str = "pictures/wallpaper_2.png"
         self.picture_3_path: str = "pictures/wallpaper_3.png"
+        self.shift_num: int = 7
 
 
     @staticmethod
