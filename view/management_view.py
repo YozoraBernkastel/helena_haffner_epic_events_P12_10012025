@@ -1,5 +1,3 @@
-from tabnanny import check
-
 from view.generic_view import View
 
 
@@ -8,31 +6,29 @@ class ManagementView(View):
     def users_db_menu(cls) -> str:
         check_answer: bool = False
         choice = ""
+        choices_list: list = ["Créer un utilisateur", "Modifier un utilisateur", "Supprimer un utilisateur"]
 
         # todo créer et utiliser un décorateur contenant la while loop et permettant de donner un argument à valid_choices !!!
         while not check_answer:
             print("Que souhaitez-vous faire ? ")
-            print("   1) Créer un utilisateur")
-            print("   2) Modifier un utilisateur")
-            print("   3) Supprimer un utilisateur")
+            cls.print_choices(choices_list)
             cls.quit_option()
 
             choice: str = input("")
             choice = choice.strip()
 
-            if any(choice == valid for valid in cls.valid_choices(3)):
+            if cls.is_choice_valid(choice, len(choices_list)):
                 check_answer = True
             else:
                 cls.unknown_option()
 
         return choice
 
-
     @classmethod
     def contracts_menu(cls) -> None:
         print("Que souhaitez-vous faire ? ")
-        print("   1) Créer un contrat")
-        print("   2) Supprimer un utilisateur")
+        choices_list: list = ["Créer un contrat", "Supprimer un utilisateur"]
+        cls.print_choices(choices_list)
         cls.quit_option()
 
     @classmethod
@@ -47,15 +43,14 @@ class ManagementView(View):
 
         while not check_answer:
             print("Quelle catégorie souhaitez-vous consulter ? ")
-            print("   1) Utilisateurs")
-            print("   2) Contrats")
-            print("   3) Événements")
+            choices_list: list = ["Utilisateurs", "Contrats", "Événements"]
+            cls.print_choices(choices_list)
             cls.quit_option()
 
             choice: str = input("")
             choice = choice.strip()
 
-            if any(choice == valid for valid in cls.valid_choices(3)):
+            if cls.is_choice_valid(choice, len(choices_list)):
                 check_answer = True
             else:
                 cls.unknown_option()

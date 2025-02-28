@@ -23,12 +23,6 @@ class Controller:
         Contract.create_table()
         Event.create_table()
 
-    @staticmethod
-    def dress_password(password: str) -> bytes:
-        salt = bcrypt.gensalt()
-        hashed = bcrypt.hashpw(password=bytes(password, encoding="ascii"), salt=salt)
-        return hashed
-
     def log_in(self) -> None:
         while self.user is None:
             username, password = View.connection()

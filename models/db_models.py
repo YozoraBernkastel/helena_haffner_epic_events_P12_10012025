@@ -1,14 +1,25 @@
 import bcrypt
 from peewee import *
 from datetime import datetime
-from Helper.jwt_helper import JwtHelper
 
 db = SqliteDatabase("database")
+
 
 class Collaborator(Model):
     username = CharField(max_length=150)
     password = BitField()
     role = CharField()
+
+    @staticmethod
+    def dress_password(password: str) -> bytes:
+        salt = bcrypt.gensalt()
+        hashed = bcrypt.hashpw(password=bytes(password, encoding="ascii"), salt=salt)
+        return hashed
+
+    @classmethod
+    def create_collab(cls, username: str, password: str, role: str) -> None:
+        new_password = cls.dress_password(password)
+        Collaborator.create(username=username, password=new_password, role=role)
 
     @classmethod
     def find_collaborator(cls, username, password) -> object | None:
