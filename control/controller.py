@@ -1,4 +1,5 @@
 from models.db_models import Collaborator, Client, Contract, Event
+from control.generic_controller import GenericController
 from control.management_controller import ManagementController
 from control.sales_controller import SalesController
 from control.support_controller import SupportController
@@ -9,7 +10,7 @@ from models.picture_decoding import PictureDecoding
 from settings.settings import MANAGEMENT, SALES, SUPPORT
 
 
-class Controller:
+class Controller(GenericController):
     def __init__(self):
         self.user: Collaborator | None = None
         self.picture_encoding = PictureEncoding()
@@ -19,7 +20,7 @@ class Controller:
 
     @staticmethod
     def init_db():
-        # todo permettre de créer un premier compte utilsiateur (management seulement) si aucune db n'existe !!
+        # todo permettre de créer un premier compte utilisateur (management seulement) si aucune db n'existe !!
         Collaborator.create_table()
         Client.create_table()
         Contract.create_table()
@@ -30,7 +31,7 @@ class Controller:
             username, password = View.connection()
             self.user = Collaborator.find_collaborator(username, password)
             if self.user is None:
-                print("Utilisateur ou mot de passe inconnu.")
+                View.unknown_user_or_password()
 
         if self.picture_encoding.are_all_pictures_exists() and View.remember_me():
             token = JwtHelper.generate_jwt(user_id=self.user.id)
@@ -49,17 +50,38 @@ class Controller:
     def sales_path(self):
         pass
 
-    def change_password(self) -> bool:
-        if View.wants_to_change_password():
-            actual_password = View.asks_actual_password()
-            if actual_password.lower() != "q" and Collaborator.find_collaborator(username=self.user.username,
-                                                                                 password=actual_password):
-                new_password = View.asks_new_password()
-                if not View.is_quitting(new_password):
-                    Collaborator.update_password(self.user.username, new_password)
-                    return True
+    def new_password(self):
+        while True:
+            password1 = View.asks_password_template("Entrez votre nouveau mot de passe une première fois")
 
-        return False
+            if self.is_quitting(password1):
+                return password1
+
+            password2 = View.asks_password_template("Puis une seconde fois")
+
+            if self.is_quitting(password2):
+                return password2
+
+            if password1 == password2:
+                return password1
+
+            View.different_passwords_prompt()
+
+    def change_password(self) -> None:
+        if not View.wants_to_change_password():
+            return
+
+        actual_password = View.asks_actual_password()
+        if Collaborator.find_collaborator(username=self.user.username, password=actual_password):
+            new_password = self.new_password()
+
+            if not self.is_quitting(new_password):
+                Collaborator.update_password(self.user.username, new_password)
+                return
+        else:
+            View.bad_password()
+
+        View.modification_canceled()
 
     def role_controller(self):
         if self.user.role == MANAGEMENT:
@@ -80,10 +102,9 @@ class Controller:
             self.log_in()
 
         assert self.user is not None
-        print(f"Bonjour {self.user.username} !!")
+        View.hello_prompt(self.user.username)
 
-        if self.change_password():
-            print("Le mot de passe a été modifié avec succès !\n")
+        self.change_password()
 
         role_controller = self.role_controller()
         role_controller.home_menu()

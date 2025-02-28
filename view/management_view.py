@@ -63,6 +63,13 @@ class ManagementView(View):
 
         return cls.choice_loop(question, choices_list)
 
+    @classmethod
+    def which_info_change(cls):
+        question: str = "Quelle information souhaitez-vous modifier ?"
+        choices_list: list = ["Nom d'utilisateur", "Rôle", "Mot de passe"]
+        return cls.choice_loop(question, choices_list)
+
+
 
 
 

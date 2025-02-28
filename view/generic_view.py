@@ -13,6 +13,14 @@ class View:
 
         return username, password
 
+    @staticmethod
+    def unknown_user_or_password() -> None:
+        print("Utilisateur ou mot de passe inconnu.")
+
+    @staticmethod
+    def bad_password():
+        print("Vous avez donné un mauvais mot de passe.")
+
     @classmethod
     def yes_or_no_choice(cls) -> bool:
         cls.print_choices(["oui", "non"])
@@ -34,16 +42,16 @@ class View:
         return View.yes_or_no_choice()
 
     @staticmethod
+    def hello_prompt(username: str) -> None:
+        print(f"Bonjour {username} !")
+
+    @staticmethod
     def quit_option_str() -> str:
         return "Q) pour quitter"
 
     @classmethod
     def quit_option_print(cls):
         print(f"   {cls.quit_option_str()}")
-
-    @staticmethod
-    def is_quitting(choice: str) -> bool:
-        return choice.lower() == "q"
 
     @staticmethod
     def valid_choices(max_range: int) -> list:
@@ -95,25 +103,17 @@ class View:
     def asks_actual_password(cls):
         return cls.asks_password_template("Entrez votre ancien mot de passe")
 
-    @classmethod
-    def asks_new_password(cls):
-        while True:
-            password1 = cls.asks_password_template("Entrez votre nouveau mot de passe une première fois")
+    @staticmethod
+    def missing_collaborator(username: str) -> None:
+        print(f"Le collaborateur {username} n'est pas présent dans la base de données")
 
-            if cls.is_quitting(password1):
-                print("Modification du mot de passe annulée")
-                return password1
+    @staticmethod
+    def different_passwords_prompt() -> None:
+        print("Vous avez donné deux mots de passe différents")
 
-            password2 = cls.asks_password_template("Puis une seconde fois")
-
-            if cls.is_quitting(password2):
-                print("Modification du mot de passe annulée")
-                return password2
-
-            if password1 == password2:
-                return password1
-
-            print("Vous avez donné deux mots de passe différents")
+    @staticmethod
+    def modification_canceled():
+        print("Annulation de la demande de modification\n")
 
     @classmethod
     def wants_to_change_password(cls) -> bool:
