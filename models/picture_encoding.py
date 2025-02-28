@@ -2,7 +2,7 @@ from PIL import ImageFile, Image
 from models.picture_manipulation import PictureManipulation
 from settings.settings import MAX_ASCII_NUM, DATA_FORMAT, DATA_INFO_BINARY_FORMAT, DOT
 
-
+# todo COMMENTER LE CODE !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 class PictureEncoding(PictureManipulation):
     def __init__(self):
         super().__init__()

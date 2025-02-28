@@ -1,4 +1,5 @@
 from view.generic_view import View
+from settings.settings import WHAT_TO_DO
 
 
 class SupportView(View):

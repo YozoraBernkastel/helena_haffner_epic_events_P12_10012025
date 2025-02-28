@@ -13,11 +13,10 @@ class View:
 
         return username, password
 
-    @staticmethod
-    def yes_or_no_choice() -> bool:
-        print("  1) oui")
-        print("  2) non")
-        choice = input("")
+    @classmethod
+    def yes_or_no_choice(cls) -> bool:
+        cls.print_choices(["oui", "non"])
+        choice = input("").strip()
 
         if choice == "1" or choice.lower() == "oui":
             return True
@@ -35,8 +34,12 @@ class View:
         return View.yes_or_no_choice()
 
     @staticmethod
-    def quit_option():
-        print("   Q) pour quitter")
+    def quit_option_str() -> str:
+        return "Q) pour quitter"
+
+    @classmethod
+    def quit_option_print(cls):
+        print(f"   {cls.quit_option_str()}")
 
     @staticmethod
     def is_quitting(choice: str) -> bool:
@@ -63,4 +66,56 @@ class View:
     def is_choice_valid(cls, choice: str, max_range: int) -> bool:
         return any(choice == valid for valid in cls.valid_choices(max_range))
 
+    @classmethod
+    def choice_loop(cls, question: str, choices_list: list) -> str:
+        check_answer: bool = False
+        choice = ""
 
+        while not check_answer:
+            print(question)
+            cls.print_choices(choices_list)
+            cls.quit_option_print()
+
+            choice: str = input("")
+            choice = choice.strip()
+
+            if cls.is_choice_valid(choice, len(choices_list)):
+                check_answer = True
+            else:
+                cls.unknown_option()
+
+        return choice
+
+    @classmethod
+    def asks_password_template(cls, prompt: str) -> str:
+        password_message = f"{prompt} -- {cls.quit_option_str()} :\n"
+        return getpass(prompt=password_message, stream=None)
+
+    @classmethod
+    def asks_actual_password(cls):
+        return cls.asks_password_template("Entrez votre ancien mot de passe")
+
+    @classmethod
+    def asks_new_password(cls):
+        while True:
+            password1 = cls.asks_password_template("Entrez votre nouveau mot de passe une première fois")
+
+            if cls.is_quitting(password1):
+                print("Modification du mot de passe annulée")
+                return password1
+
+            password2 = cls.asks_password_template("Puis une seconde fois")
+
+            if cls.is_quitting(password2):
+                print("Modification du mot de passe annulée")
+                return password2
+
+            if password1 == password2:
+                return password1
+
+            print("Vous avez donné deux mots de passe différents")
+
+    @classmethod
+    def wants_to_change_password(cls) -> bool:
+        print("Voulez-vous changer votre mot de passe ?")
+        return cls.yes_or_no_choice()

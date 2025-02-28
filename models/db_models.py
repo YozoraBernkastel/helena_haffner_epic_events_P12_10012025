@@ -32,6 +32,11 @@ class Collaborator(Model):
         return None
 
     @classmethod
+    def update_password(cls, username: str, new_password: str) -> None:
+        new_password = cls.dress_password(new_password)
+        cls.update(password=new_password).where(Collaborator.username == username).execute()
+
+    @classmethod
     def find_last_user_session(cls, user_id: int) -> object | None:
         user = cls.get_or_none(id=user_id)
 
@@ -42,6 +47,7 @@ class Collaborator(Model):
 
     class Meta:
         database = db
+
 
 class Client(Model):
     full_name = CharField(max_length=150)

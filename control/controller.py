@@ -1,12 +1,13 @@
-import bcrypt
 from models.db_models import Collaborator, Client, Contract, Event
+from control.management_controller import ManagementController
+from control.sales_controller import SalesController
+from control.support_controller import SupportController
 from view.generic_view import View
-from view.management_view import ManagementView
-from view.sales_view import SalesView
-from view.support_view import SupportView
 from Helper.jwt_helper import JwtHelper
 from models.picture_encoding import PictureEncoding
 from models.picture_decoding import PictureDecoding
+from settings.settings import MANAGEMENT, SALES, SUPPORT
+
 
 class Controller:
     def __init__(self):
@@ -18,6 +19,7 @@ class Controller:
 
     @staticmethod
     def init_db():
+        # todo permettre de créer un premier compte utilsiateur (management seulement) si aucune db n'existe !!
         Collaborator.create_table()
         Client.create_table()
         Contract.create_table()
@@ -41,21 +43,31 @@ class Controller:
 
         return user if is_user else None
 
-    def management_path(self) -> None:
-        choice = ManagementView.menu()
-
-        if choice == "1":
-            ManagementView.users_db_menu()
-        elif choice == "2":
-            ManagementView.contracts_menu()
-        elif choice == "3":
-            ManagementView.events_menu()
-
     def support_path(self):
         pass
 
     def sales_path(self):
         pass
+
+    def change_password(self) -> bool:
+        if View.wants_to_change_password():
+            actual_password = View.asks_actual_password()
+            if actual_password.lower() != "q" and Collaborator.find_collaborator(username=self.user.username,
+                                                                                 password=actual_password):
+                new_password = View.asks_new_password()
+                if not View.is_quitting(new_password):
+                    Collaborator.update_password(self.user.username, new_password)
+                    return True
+
+        return False
+
+    def role_controller(self):
+        if self.user.role == MANAGEMENT:
+            return ManagementController
+        if self.user.role == SUPPORT:
+            return SupportController
+        if self.user.role == SALES:
+            return SalesController
 
     def display_welcome_menu(self) -> None:
         token: str = self.picture_decoding.token_getter()
@@ -69,16 +81,16 @@ class Controller:
 
         assert self.user is not None
         print(f"Bonjour {self.user.username} !!")
-        print(self.user.role)
 
-        if self.user.role == "management":
-            self.management_path()
-        elif self.user.role == "support":
-            self.support_path()
-        elif self.user.role == "sales":
-            self.sales_path()
-        else:
-            print("Aucun accès aux données")
+        if self.change_password():
+            print("Le mot de passe a été modifié avec succès !\n")
+
+        role_controller = self.role_controller()
+        role_controller.home_menu()
+
+
+
+
 
 
 

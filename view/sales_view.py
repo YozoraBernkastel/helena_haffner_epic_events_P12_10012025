@@ -1,4 +1,5 @@
 from view.generic_view import View
+from settings.settings import WHAT_TO_DO
 
 
 class SalesView(View):
@@ -8,6 +9,10 @@ class SalesView(View):
 
     @classmethod
     def events_menu(cls) -> None:
+        pass
+
+    @classmethod
+    def customer_menu(cls):
         pass
 
     @classmethod

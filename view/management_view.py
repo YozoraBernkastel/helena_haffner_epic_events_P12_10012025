@@ -1,61 +1,68 @@
 from view.generic_view import View
+from settings.settings import WHAT_TO_DO, ROLES_LIST, MANAGEMENT, SUPPORT, SALES
 
 
 class ManagementView(View):
     @classmethod
-    def users_db_menu(cls) -> str:
-        check_answer: bool = False
-        choice = ""
-        choices_list: list = ["Créer un utilisateur", "Modifier un utilisateur", "Supprimer un utilisateur"]
+    def collab_menu(cls) -> str:
+        choices_list: list = ["Créer un collaborateur", "Modifier un collaborateur", "Supprimer un collaborateur"]
 
-        # todo créer et utiliser un décorateur contenant la while loop et permettant de donner un argument à valid_choices !!!
-        while not check_answer:
-            print("Que souhaitez-vous faire ? ")
-            cls.print_choices(choices_list)
-            cls.quit_option()
-
-            choice: str = input("")
-            choice = choice.strip()
-
-            if cls.is_choice_valid(choice, len(choices_list)):
-                check_answer = True
-            else:
-                cls.unknown_option()
-
-        return choice
+        return cls.choice_loop(WHAT_TO_DO, choices_list)
 
     @classmethod
-    def contracts_menu(cls) -> None:
-        print("Que souhaitez-vous faire ? ")
-        choices_list: list = ["Créer un contrat", "Supprimer un utilisateur"]
-        cls.print_choices(choices_list)
-        cls.quit_option()
+    def contracts_menu(cls) -> str:
+        choices_list: list = ["Créer un contrat", "Supprimer un contrat"]
+        return cls.choice_loop(WHAT_TO_DO, choices_list)
 
     @classmethod
-    def events_menu(cls) -> None:
-        print("event menu")
-        pass
+    def events_menu(cls) -> str:
+        question = "Quel contrat souhaitez-vous modifier ?"
+        # todo afficher la liste des contrats présents dans la db
+        choices_list: list = ["contrat 1", "contrat 2"]
+        return cls.choice_loop(question, choices_list)
 
     @classmethod
     def menu(cls) -> str:
-        check_answer: bool = False
-        choice = ""
+        question: str = "Quelle catégorie souhaitez-vous consulter ? "
+        choices_list: list = ["Collaborateurs", "Contrats", "Événements"]
 
-        while not check_answer:
-            print("Quelle catégorie souhaitez-vous consulter ? ")
-            choices_list: list = ["Utilisateurs", "Contrats", "Événements"]
-            cls.print_choices(choices_list)
-            cls.quit_option()
+        return cls.choice_loop(question, choices_list)
 
-            choice: str = input("")
-            choice = choice.strip()
+    @staticmethod
+    def asks_username(complete: str = "") -> str:
+        print(f"Nom du collaborateur {complete}:")
+        return input("").strip()
 
-            if cls.is_choice_valid(choice, len(choices_list)):
-                check_answer = True
-            else:
-                cls.unknown_option()
+    @classmethod
+    def asks_password(cls) -> str:
+        return cls.asks_password_template("Définissez son mot de passe:")
 
-        return choice
+    @staticmethod
+    def roles_enum(choice: str) -> str:
+        match choice:
+            case "1":
+                return MANAGEMENT
+            case "2":
+                return SUPPORT
+            case "3":
+                return SALES
+            case _:
+                return "q"
+
+    @classmethod
+    def asks_role(cls) -> str:
+        question: str = "Définissez son rôle:"
+        choice: str = ManagementView.choice_loop(question, ROLES_LIST).strip()
+
+        return cls.roles_enum(choice)
+
+    @classmethod
+    def collab_modification(cls):
+        question: str = "Que souhaitez-vous modifier ?"
+        choices_list: list = ["Nom d'utilisateur", "Mot de passe", "Rôle"]
+
+        return cls.choice_loop(question, choices_list)
+
 
 
 
