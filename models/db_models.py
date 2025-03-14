@@ -1,14 +1,25 @@
 import bcrypt
 from peewee import *
 from datetime import datetime
-from Helper.jwt_helper import JwtHelper
 
 db = SqliteDatabase("database")
 
+
 class Collaborator(Model):
-    username = CharField(max_length=150)
+    username = CharField(max_length=150) # todo unique = true ? ??
     password = BitField()
     role = CharField()
+
+    @staticmethod
+    def dress_password(password: str) -> bytes:
+        salt = bcrypt.gensalt()
+        hashed = bcrypt.hashpw(password=bytes(password, encoding="ascii"), salt=salt)
+        return hashed
+
+    @classmethod
+    def create_collab(cls, username: str, password: str, role: str) -> None:
+        new_password = cls.dress_password(password)
+        Collaborator.create(username=username, password=new_password, role=role)
 
     @classmethod
     def find_collaborator(cls, username, password) -> object | None:
@@ -19,6 +30,19 @@ class Collaborator(Model):
             return user
 
         return None
+
+    def update_username(self, new_username: str) -> None:
+        self.username = new_username
+        self.save()
+
+    def update_password(self, new_password: str) -> None:
+        new_password = self.dress_password(new_password)
+        self.password = new_password
+        self.save()
+
+    def update_role(self, new_role: str):
+        self.role = new_role
+        self.save()
 
     @classmethod
     def find_last_user_session(cls, user_id: int) -> object | None:
@@ -31,6 +55,7 @@ class Collaborator(Model):
 
     class Meta:
         database = db
+
 
 class Client(Model):
     full_name = CharField(max_length=150)

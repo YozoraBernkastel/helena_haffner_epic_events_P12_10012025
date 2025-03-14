@@ -1,4 +1,4 @@
-from control.controller import Controller
+from control.main_controller import Controller
 
 
 def main():
