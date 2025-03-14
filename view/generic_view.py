@@ -42,16 +42,24 @@ class View:
         return View.yes_or_no_choice()
 
     @staticmethod
+    def username_already_used(username: str) -> None:
+        print(f"Le nom d'utilisateur {username} est déjà utilisé, veuillez en choisir un autre, svp.")
+
+    @staticmethod
     def hello_prompt(username: str) -> None:
         print(f"Bonjour {username} !")
 
-    @staticmethod
-    def quit_option_str() -> str:
-        return "Q) pour quitter"
-
     @classmethod
     def quit_option_print(cls):
-        print(f"   {cls.quit_option_str()}")
+        print("   Q) pour quitter")
+
+    @staticmethod
+    def brackets_quit_str() -> str:
+        return "('Q' pour quitter)"
+
+    @classmethod
+    def quit_print(cls, message: str):
+        print(f"{message} {cls.brackets_quit_str()}")
 
     @staticmethod
     def valid_choices(max_range: int) -> list:
@@ -96,7 +104,7 @@ class View:
 
     @classmethod
     def asks_password_template(cls, prompt: str) -> str:
-        password_message = f"{prompt} -- {cls.quit_option_str()} :\n"
+        password_message = f"{prompt} {cls.brackets_quit_str()} :\n"
         return getpass(prompt=password_message, stream=None)
 
     @classmethod
@@ -119,3 +127,8 @@ class View:
     def wants_to_change_password(cls) -> bool:
         print("Voulez-vous changer votre mot de passe ?")
         return cls.yes_or_no_choice()
+
+    @staticmethod
+    def actual_role(collaborator):
+        print(f"{collaborator.username} est actuellement affecté au service de {collaborator.role}")
+

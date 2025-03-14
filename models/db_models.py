@@ -36,6 +36,9 @@ class Collaborator(Model):
         new_password = cls.dress_password(new_password)
         cls.update(password=new_password).where(Collaborator.username == username).execute()
 
+    def update_username(self, new_username: str) -> None:
+        self.update(username=new_username).where(Collaborator.username == self.username).execute()
+
     @classmethod
     def find_last_user_session(cls, user_id: int) -> object | None:
         user = cls.get_or_none(id=user_id)

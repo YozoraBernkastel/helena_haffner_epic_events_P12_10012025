@@ -50,46 +50,13 @@ class Controller(GenericController):
     def sales_path(self):
         pass
 
-    def new_password(self):
-        while True:
-            password1 = View.asks_password_template("Entrez votre nouveau mot de passe une première fois")
-
-            if self.is_quitting(password1):
-                return password1
-
-            password2 = View.asks_password_template("Puis une seconde fois")
-
-            if self.is_quitting(password2):
-                return password2
-
-            if password1 == password2:
-                return password1
-
-            View.different_passwords_prompt()
-
-    def change_password(self) -> None:
-        if not View.wants_to_change_password():
-            return
-
-        actual_password = View.asks_actual_password()
-        if Collaborator.find_collaborator(username=self.user.username, password=actual_password):
-            new_password = self.new_password()
-
-            if not self.is_quitting(new_password):
-                Collaborator.update_password(self.user.username, new_password)
-                return
-        else:
-            View.bad_password()
-
-        View.modification_canceled()
-
     def role_controller(self):
         if self.user.role == MANAGEMENT:
-            return ManagementController
+            return ManagementController(self.user)
         if self.user.role == SUPPORT:
-            return SupportController
+            return SupportController(self.user)
         if self.user.role == SALES:
-            return SalesController
+            return SalesController(self.user)
 
     def display_welcome_menu(self) -> None:
         token: str = self.picture_decoding.token_getter()
@@ -103,8 +70,6 @@ class Controller(GenericController):
 
         assert self.user is not None
         View.hello_prompt(self.user.username)
-
-        self.change_password()
 
         role_controller = self.role_controller()
         role_controller.home_menu()
