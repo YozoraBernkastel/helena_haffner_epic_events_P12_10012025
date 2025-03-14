@@ -1,4 +1,6 @@
 from getpass import getpass
+from settings.settings import MANAGEMENT, SUPPORT, SALES
+
 
 
 class View:
@@ -47,7 +49,7 @@ class View:
 
     @staticmethod
     def hello_prompt(username: str) -> None:
-        print(f"Bonjour {username} !")
+        print(f"Bonjour {username} !\n")
 
     @classmethod
     def quit_option_print(cls):
@@ -109,7 +111,7 @@ class View:
 
     @classmethod
     def asks_actual_password(cls):
-        return cls.asks_password_template("Entrez votre ancien mot de passe")
+        return cls.asks_password_template("Veuillez indiquer votre mot de passe")
 
     @staticmethod
     def missing_collaborator(username: str) -> None:
@@ -129,6 +131,23 @@ class View:
         return cls.yes_or_no_choice()
 
     @staticmethod
-    def actual_role(collaborator):
-        print(f"{collaborator.username} est actuellement affecté au service de {collaborator.role}")
+    def password_updated():
+        print("Mot de passe mis à jour")
+
+    @classmethod
+    def reset_collab_password(cls, username: str) -> bool:
+        print(f"Voulez-vous changer le mot de passe de {username} ?")
+        return cls.yes_or_no_choice()
+
+    @staticmethod
+    def roles_enum(choice: str) -> str:
+        match choice:
+            case "1":
+                return MANAGEMENT
+            case "2":
+                return SUPPORT
+            case "3":
+                return SALES
+            case _:
+                return "q"
 

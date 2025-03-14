@@ -6,7 +6,7 @@ db = SqliteDatabase("database")
 
 
 class Collaborator(Model):
-    username = CharField(max_length=150)
+    username = CharField(max_length=150) # todo unique = true ? ??
     password = BitField()
     role = CharField()
 
@@ -31,13 +31,18 @@ class Collaborator(Model):
 
         return None
 
-    @classmethod
-    def update_password(cls, username: str, new_password: str) -> None:
-        new_password = cls.dress_password(new_password)
-        cls.update(password=new_password).where(Collaborator.username == username).execute()
-
     def update_username(self, new_username: str) -> None:
-        self.update(username=new_username).where(Collaborator.username == self.username).execute()
+        self.username = new_username
+        self.save()
+
+    def update_password(self, new_password: str) -> None:
+        new_password = self.dress_password(new_password)
+        self.password = new_password
+        self.save()
+
+    def update_role(self, new_role: str):
+        self.role = new_role
+        self.save()
 
     @classmethod
     def find_last_user_session(cls, user_id: int) -> object | None:

@@ -8,7 +8,7 @@ class GenericController:
 
     @staticmethod
     def is_available_username(username: str) -> bool:
-        return Collaborator.get_or_none(username=username) is not None
+        return Collaborator.get_or_none(username=username) is None
 
     @classmethod
     def new_password(cls):
@@ -38,7 +38,8 @@ class GenericController:
             new_password = cls.new_password()
 
             if not cls.is_quitting(new_password):
-                Collaborator.update_password(user.username, new_password)
+                user.update_password(new_password)
+                View.password_updated()
                 return
         else:
             View.bad_password()

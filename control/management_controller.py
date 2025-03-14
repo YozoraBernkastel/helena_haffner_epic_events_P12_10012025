@@ -7,58 +7,68 @@ class ManagementController(GenericController):
     def __init__(self, user: Collaborator):
         self.user: Collaborator = user
 
-    @classmethod
-    def collab_creation(cls) -> None:
+    def collab_creation(self) -> None:
         is_username_already_use: bool = True
         username: str = ""
 
         while is_username_already_use:
             username = View.asks_username()
 
-            if cls.is_quitting(username):
+            if self.is_quitting(username):
                 return
 
-            if cls.is_available_username(username):
+            if self.is_available_username(username):
                 break
             View.username_already_used(username)
 
-        password: str = View.asks_password()
+        password: str = View.asks_collab_password()
 
-        if cls.is_quitting(password):
+        if self.is_quitting(password):
             return
 
         role = View.asks_role()
 
-        if cls.is_quitting(role):
+        if self.is_quitting(role):
             return
 
         Collaborator.create_collab(username, password, role)
         print(f"Collaborateur {username} créé !")
 
-    @classmethod
-    def username_change(cls, collaborator: Collaborator) -> None:
+    def username_change(self, collaborator: Collaborator) -> None:
         while True:
             new_username = View.asks_username("à partir de maintenant")
 
-            if cls.is_quitting(new_username):
+            if self.is_quitting(new_username):
                 return
 
-            if cls.is_available_username(new_username):
+            if self.is_available_username(new_username):
                 collaborator.update_username(new_username=new_username)
                 return
 
             View.username_already_used(new_username)
 
-    @classmethod
-    def role_change(cls, collaborator: Collaborator) -> None:
-        View.actual_role(collaborator)
+    def role_change(self, collaborator: Collaborator) -> None:
         new_role = View.asks_role(modification=True)
-        print(f"{new_role = }")
 
-    @classmethod
-    def collab_modification(cls) -> None:
+        if not self.is_quitting(new_role):
+            collaborator.update_role(new_role=new_role)
+
+    def check_user_password(self):
+        user_password = View.asks_actual_password()
+        return Collaborator.find_collaborator(self.user.username, user_password) is not None
+
+    def password_reset(self, collaborator: Collaborator) -> None:
+        if not View.reset_collab_password(collaborator.username):
+            return
+
+        if self.check_user_password():
+            new_password = View.asks_collab_password()
+            collaborator.update_password(new_password=new_password)
+            View.password_updated()
+
+    def collab_modification(self) -> None:
         username = View.asks_username("à modifier")
-        if cls.is_quitting(username):
+        if self.is_quitting(username):
             return
 
         collaborator = Collaborator.get_or_none(username=username)
@@ -70,36 +80,46 @@ class ManagementController(GenericController):
         choice = View.which_info_change()
 
         if choice == "1":
-            cls.username_change(collaborator)
+            self.username_change(collaborator)
         elif choice == "2":
-            cls.role_change(collaborator)
+            self.role_change(collaborator)
         elif choice == "3":
-            cls.password_reset(collaborator)
+            self.password_reset(collaborator)
         else:
             return
 
-    @staticmethod
-    def collab_deletion():
-        pass
+    def collab_deletion(self):
+        username = View.asks_username("à supprimer")
+        if self.is_quitting(username):
+            return
+
+        collaborator = Collaborator.get_or_none(username=username)
+
+        if collaborator is None:
+            View.missing_collaborator(username)
+            return
+
+        if View.asks_collab_delete_confirmation(collaborator.username):
+            collaborator.delete_instance()
 
     @staticmethod
-    def collab_list():
+    def objects_list():
         # todo menu choix de role puis afficher la liste des employés possédant ce rôle j'imagine
+        # todo peut aussi accéder aux events, clients, etc en liste seule
         pass
 
-    @classmethod
-    def collab_menu(cls) -> None:
+    def collab_menu(self) -> None:
         while True:
             choice = View.collab_menu()
 
             if choice == "1":
-                cls.collab_creation()
+                self.collab_creation()
             elif choice == "2":
-                cls.collab_modification()
+                self.collab_modification()
             elif choice == "3":
-                cls.collab_deletion()
+                self.collab_deletion()
             elif choice == "4":
-                cls.collab_list()
+                self.objects_list()
             else:
                 return
 
@@ -113,6 +133,9 @@ class ManagementController(GenericController):
         elif choice == "3":
             self.events_menu()
         elif choice == "4":
+            self.clients_menu()
+        elif choice == "5":
             self.account_menu(self.user)
         else:
             return
+
