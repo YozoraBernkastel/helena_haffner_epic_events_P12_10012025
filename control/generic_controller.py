@@ -56,3 +56,20 @@ class GenericController:
         # todo à compléter avec le changement de nom d'utilisateur
         cls.change_password(user)
         pass
+
+    def customer_collaborator_modification(self, customer) -> None:
+        collab_name = View.asks_username(complete=f"auquel donner le client {customer.full_name}")
+
+        if self.is_quitting(collab_name):
+            View.modification_canceled()
+            return
+
+        collaborator = Collaborator.get_or_none(username=collab_name, role=SALES)
+
+        if collaborator is None:
+            View.unknown_sales_collaborator(collab_name)
+            return
+
+        customer.collaborator_id = collaborator
+        customer.save()
+        View.modification_done()

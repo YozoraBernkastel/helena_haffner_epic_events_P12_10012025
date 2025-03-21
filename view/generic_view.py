@@ -134,6 +134,11 @@ class View:
         return cls.asks_password_template("Veuillez indiquer votre mot de passe")
 
     @staticmethod
+    def asks_username(complete: str = "") -> str:
+        question = f'Nom du collaborateur {complete}:'
+        return View.no_blank_answer(question)
+
+    @staticmethod
     def missing_collaborator(username: str) -> None:
         print(f"Le collaborateur {username} n'est pas présent dans la base de données")
 
@@ -183,3 +188,7 @@ class View:
     @staticmethod
     def modification_done():
         print("Modification effectuée !\n")
+
+    @staticmethod
+    def unknown_sales_collaborator(collab_name: str) -> None:
+        print(f"Le collaborateur {collab_name} n'existe pas ou n'appartient pas au département commercial.")
