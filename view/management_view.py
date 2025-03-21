@@ -1,5 +1,5 @@
 from view.generic_view import View
-from settings.settings import WHAT_TO_DO, ROLES_LIST
+from settings.settings import ROLES_LIST
 
 
 class ManagementView(View):
@@ -8,20 +8,18 @@ class ManagementView(View):
         choices_list: list = ["Créer un collaborateur", "Modifier un collaborateur",
                               "Supprimer un collaborateur", "Voir la liste des collaborateurs"]
 
-        return cls.choice_loop(WHAT_TO_DO, choices_list)
-
+        return cls.choice_loop(cls.what_to_do(), choices_list)
 
     @classmethod
     def menu(cls) -> str:
-        question: str = "Quelle catégorie souhaitez-vous consulter ? "
-        choices_list: list = ["Collaborateurs", "Contrats", "Événements", "Clients", "Mon Compte"]
+        choices_list: list = ["Collaborateurs", "Contrats", "Événements", "Mon Compte"]
 
-        return cls.choice_loop(question, choices_list)
+        return cls.choice_loop(cls.category_question(), choices_list)
 
     @staticmethod
     def asks_username(complete: str = "") -> str:
-        View.quit_print(f'Nom du collaborateur {complete}:')
-        return input("").strip()
+        question = f'Nom du collaborateur {complete}:'
+        return View.no_blank_answer(question)
 
     @classmethod
     def asks_collab_password(cls) -> str:

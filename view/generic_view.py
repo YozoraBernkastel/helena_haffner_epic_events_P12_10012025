@@ -2,7 +2,6 @@ from getpass import getpass
 from settings.settings import MANAGEMENT, SUPPORT, SALES
 
 
-
 class View:
     @staticmethod
     def connection() -> tuple[str, str]:
@@ -16,11 +15,19 @@ class View:
         return username, password
 
     @staticmethod
+    def what_to_do() -> str:
+        return "Que souhaitez-vous faire ?"
+
+    @staticmethod
     def unknown_user_or_password() -> None:
         print("Utilisateur ou mot de passe inconnu.")
 
     @staticmethod
-    def bad_password():
+    def unknown_customer() -> None:
+        print("Ce client est n'existe pas.")
+
+    @staticmethod
+    def bad_password() -> None:
         print("Vous avez donné un mauvais mot de passe.")
 
     @classmethod
@@ -44,15 +51,24 @@ class View:
         return View.yes_or_no_choice()
 
     @staticmethod
-    def username_already_used(username: str) -> None:
-        print(f"Le nom d'utilisateur {username} est déjà utilisé, veuillez en choisir un autre, svp.")
+    def already_used_prompt(category: str, data: str, is_feminine: bool = False) -> None:
+        feminine: str = "e" if is_feminine else ""
+        print(f'{category} {data} est déjà utlisé{feminine}, veuillez en choisir un{feminine} autre, svp.')
+
+    @classmethod
+    def username_already_used(cls, username: str) -> None:
+        cls.already_used_prompt("Le nom d'utilisateur", username)
+
+    @classmethod
+    def mail_already_used(cls, mail: str) -> None:
+        cls.already_used_prompt("L'adresse mail", mail, True)
 
     @staticmethod
     def hello_prompt(username: str) -> None:
         print(f"Bonjour {username} !\n")
 
     @classmethod
-    def quit_option_print(cls):
+    def quit_option_print(cls) -> None:
         print("   Q) pour quitter")
 
     @staticmethod
@@ -60,8 +76,12 @@ class View:
         return "('Q' pour quitter)"
 
     @classmethod
-    def quit_print(cls, message: str):
+    def quit_print(cls, message: str) -> None:
         print(f"{message} {cls.brackets_quit_str()}")
+
+    @staticmethod
+    def category_question() -> str:
+        return "Quelle catégorie souhaitez-vous consulter ? "
 
     @staticmethod
     def valid_choices(max_range: int) -> list:
@@ -71,7 +91,7 @@ class View:
         return valid_choices_list + quit_choices
 
     @staticmethod
-    def unknown_option():
+    def unknown_option() -> None:
         print(
             "\nCette option n'existe malheureusement pas,"
             " veuillez sélectionner une commande valide parmi la liste\n")
@@ -110,7 +130,7 @@ class View:
         return getpass(prompt=password_message, stream=None)
 
     @classmethod
-    def asks_actual_password(cls):
+    def asks_actual_password(cls) -> str:
         return cls.asks_password_template("Veuillez indiquer votre mot de passe")
 
     @staticmethod
@@ -122,7 +142,7 @@ class View:
         print("Vous avez donné deux mots de passe différents")
 
     @staticmethod
-    def modification_canceled():
+    def modification_canceled() -> None:
         print("Annulation de la demande de modification\n")
 
     @classmethod
@@ -131,7 +151,7 @@ class View:
         return cls.yes_or_no_choice()
 
     @staticmethod
-    def password_updated():
+    def password_updated() -> None:
         print("Mot de passe mis à jour")
 
     @classmethod
@@ -151,3 +171,15 @@ class View:
             case _:
                 return "q"
 
+    @classmethod
+    def no_blank_answer(cls, question: str) -> str:
+        response: str = ""
+        while response.strip() == "":
+            cls.quit_print(question)
+            response = input("")
+
+        return response
+
+    @staticmethod
+    def modification_done():
+        print("Modification effectuée !\n")

@@ -1,4 +1,4 @@
-from models.db_models import Collaborator, Client, Contract, Event
+from models.db_models import Collaborator, Customer, Contract, Event
 from control.generic_controller import GenericController
 from control.management_controller import ManagementController
 from control.sales_controller import SalesController
@@ -22,7 +22,7 @@ class Controller(GenericController):
     def init_db():
         # todo permettre de créer un premier compte utilisateur (management seulement) si aucune db n'existe !!
         Collaborator.create_table()
-        Client.create_table()
+        Customer.create_table()
         Contract.create_table()
         Event.create_table()
 
@@ -38,8 +38,12 @@ class Controller(GenericController):
             self.picture_encoding.crypt_token(token)
 
     @staticmethod
-    def find_last_user(last_user_id):
+    def find_last_user(last_user_id) -> Collaborator | None:
         user = Collaborator.find_last_user_session(last_user_id)
+
+        if user is None:
+            return None
+
         is_user: bool = View.is_that_you(user.username)
 
         return user if is_user else None

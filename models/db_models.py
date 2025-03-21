@@ -6,7 +6,7 @@ db = SqliteDatabase("database")
 
 
 class Collaborator(Model):
-    username = CharField(max_length=150) # todo unique = true ? ??
+    username = CharField(max_length=150, unique=True)
     password = BitField()
     role = CharField()
 
@@ -47,6 +47,7 @@ class Collaborator(Model):
     @classmethod
     def find_last_user_session(cls, user_id: int) -> object | None:
         user = cls.get_or_none(id=user_id)
+        print(user)
 
         if user is not None:
             return user
@@ -57,14 +58,14 @@ class Collaborator(Model):
         database = db
 
 
-class Client(Model):
+class Customer(Model):
     full_name = CharField(max_length=150)
-    mail = CharField()
-    tel = CharField()
+    mail = CharField(unique=True)
+    phone = CharField()
     company_name = CharField(max_length=150)
     creation_date = DateTimeField(default=datetime.now())
     last_update = DateTimeField(default=datetime.now())
-    collaborator_id = ForeignKeyField(Collaborator, backref="clients")
+    collaborator_id = ForeignKeyField(Collaborator, backref="customers")
     information = CharField()
 
     class Meta:
@@ -72,7 +73,7 @@ class Client(Model):
 
 
 class Contract(Model):
-    client_id = ForeignKeyField(Client, backref="contracts")
+    client_id = ForeignKeyField(Customer, backref="contracts")
     collaborator = ForeignKeyField(Collaborator, backref="contracts")
     total_value = DoubleField()
     remains_to_be_paid = DoubleField()
@@ -84,9 +85,9 @@ class Contract(Model):
         database = db
 
 class Event(Model):
-    name = CharField()
+    name = CharField(unique=True)
     contract = ForeignKeyField(Contract, backref="events")
-    client = ForeignKeyField(Client, backref="events")
+    client = ForeignKeyField(Customer, backref="events")
     starting_time = DateTimeField()
     ending_time = DateTimeField()
     support = ForeignKeyField(Collaborator, backref="support_events")

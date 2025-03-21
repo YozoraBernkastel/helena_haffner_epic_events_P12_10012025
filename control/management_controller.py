@@ -43,6 +43,7 @@ class ManagementController(GenericController):
 
             if self.is_available_username(new_username):
                 collaborator.update_username(new_username=new_username)
+                View.modification_done()
                 return
 
             View.username_already_used(new_username)
@@ -52,6 +53,7 @@ class ManagementController(GenericController):
 
         if not self.is_quitting(new_role):
             collaborator.update_role(new_role=new_role)
+            View.modification_done()
 
     def check_user_password(self):
         user_password = View.asks_actual_password()
@@ -89,6 +91,7 @@ class ManagementController(GenericController):
             return
 
     def collab_deletion(self):
+        # todo si le collaborateur a des clients par exemple, il faut peut-être demander à réattribuer les clients à quelqu'un d'autre avant la suppression, non ?
         username = View.asks_username("à supprimer")
         if self.is_quitting(username):
             return
@@ -109,33 +112,32 @@ class ManagementController(GenericController):
         pass
 
     def collab_menu(self) -> None:
-        while True:
-            choice = View.collab_menu()
 
-            if choice == "1":
-                self.collab_creation()
-            elif choice == "2":
-                self.collab_modification()
-            elif choice == "3":
-                self.collab_deletion()
-            elif choice == "4":
-                self.objects_list()
-            else:
-                return
-
-    def home_menu(self) -> None:
-        choice = View.menu()
+        choice = View.collab_menu()
 
         if choice == "1":
-            self.collab_menu()
+            self.collab_creation()
         elif choice == "2":
-            self.contracts_menu()
+            self.collab_modification()
         elif choice == "3":
-            self.events_menu()
+            self.collab_deletion()
         elif choice == "4":
-            self.clients_menu()
-        elif choice == "5":
-            self.account_menu(self.user)
+            self.objects_list()
         else:
             return
+
+    def home_menu(self) -> None:
+        while True:
+            choice = View.menu()
+
+            if choice == "1":
+                self.collab_menu()
+            elif choice == "2":
+                self.contracts_menu()
+            elif choice == "3":
+                self.events_menu()
+            elif choice == "4":
+                self.account_menu(self.user)
+            else:
+                return
 

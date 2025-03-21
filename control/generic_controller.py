@@ -1,5 +1,6 @@
 from view.generic_view import View
-from models.db_models import Collaborator
+from models.db_models import Collaborator, Customer
+
 
 class GenericController:
     @staticmethod
@@ -9,6 +10,10 @@ class GenericController:
     @staticmethod
     def is_available_username(username: str) -> bool:
         return Collaborator.get_or_none(username=username) is None
+
+    @staticmethod
+    def is_available_mail(new_mail: str) -> bool:
+        return Customer.get_or_none(mail=new_mail) is None
 
     @classmethod
     def new_password(cls):
