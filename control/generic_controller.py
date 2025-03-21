@@ -1,5 +1,6 @@
 from view.generic_view import View
 from models.db_models import Collaborator, Customer
+from settings.settings import SALES
 
 
 class GenericController:
@@ -70,6 +71,6 @@ class GenericController:
             View.unknown_sales_collaborator(collab_name)
             return
 
-        customer.collaborator_id = collaborator
+        customer.collaborator = collaborator
         customer.save()
         View.modification_done()

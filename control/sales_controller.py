@@ -1,7 +1,6 @@
 from view.sales_view import SalesView as View
 from models.db_models import Collaborator, Customer
 from control.generic_controller import GenericController
-from settings.settings import SALES
 
 
 class SalesController(GenericController):
@@ -9,7 +8,7 @@ class SalesController(GenericController):
         self.user: Collaborator = user
 
     def my_customers_list(self) -> None:
-        my_customers_list = Customer.select().where(Customer.collaborator_id == self.user).execute()
+        my_customers_list = Customer.select().where(Customer.collaborator == self.user).execute()
         [print(f"Client : {customer.full_name} - mail : {customer.mail} - entreprise : {customer.company_name}")
          for customer in my_customers_list]
         print()
@@ -43,7 +42,7 @@ class SalesController(GenericController):
         information = View.asks_info()
 
         Customer.create(full_name=customer_name, mail=customer_mail, phone=customer_phone,
-                        company_name=customer_company, collaborator_id=self.user, information=information)
+                        company_name=customer_company, collaborator=self.user, information=information)
 
     def modify_customer(self, customer: Customer, attribute: str, new_data: str) -> None:
         if self.is_quitting(new_data):
@@ -80,7 +79,7 @@ class SalesController(GenericController):
         if self.is_quitting(customer_mail):
             return
 
-        customer = Customer.get_or_none(mail=customer_mail, collaborator_id=self.user)
+        customer = Customer.get_or_none(mail=customer_mail, collaborator=self.user)
 
         if customer is None:
             View.unknown_customer()
