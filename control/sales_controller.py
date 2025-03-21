@@ -1,6 +1,7 @@
 from view.sales_view import SalesView as View
 from models.db_models import Collaborator, Customer
 from control.generic_controller import GenericController
+from settings.settings import SALES
 
 
 class SalesController(GenericController):
@@ -44,68 +45,32 @@ class SalesController(GenericController):
         Customer.create(full_name=customer_name, mail=customer_mail, phone=customer_phone,
                         company_name=customer_company, collaborator_id=self.user, information=information)
 
-    @classmethod
-    def customer_name_modification(cls, customer: Customer) -> None:
-        new_name = View.rename_customer_prompt(customer.full_name)
-
-        if cls.is_quitting(new_name):
+    def modify_customer(self, customer: Customer, attribute: str, new_data: str) -> None:
+        if self.is_quitting(new_data):
             View.modification_canceled()
             return
 
-        customer.full_name = new_name
+        setattr(customer, attribute, new_data)
         customer.save()
         View.modification_done()
 
-    @classmethod
-    def customer_mail_modification(cls, customer: Customer) -> None:
-        new_mail = View.new_mail_customer_prompt(customer.full_name)
-
-        if cls.is_quitting(new_mail):
-            View.modification_canceled()
-            return
-
-        customer.mail = new_mail
-        customer.save()
-        View.modification_done()
-
-    @classmethod
-    def customer_phone_modification(cls, customer: Customer) -> None:
-        new_phone = View.new_phone_customer_prompt(customer.full_name)
-
-        if cls.is_quitting(new_phone):
-            View.modification_canceled()
-            return
-
-        customer.phone = new_phone
-        customer.save()
-        View.modification_done()
-
-    @classmethod
-    def customer_company_modification(cls, customer: Customer) -> None:
-        new_company_name = View.new_company_prompt(customer.full_name)
-
-        if cls.is_quitting(new_company_name):
-            View.modification_canceled()
-            return
-
-        customer.company_name = new_company_name
-        customer.save()
-        View.modification_done()
-
-    @classmethod
-    def customer_modification_detail(cls, customer: Customer):
+    def customer_modification_detail(self, customer: Customer):
         choice = View.customer_modification_menu(customer.full_name)
 
         if choice == "1":
-            cls.customer_name_modification(customer)
+            new_name = View.rename_customer_prompt(customer.full_name)
+            self.modify_customer(customer, "full_name", new_name)
         elif choice == "2":
-            cls.customer_mail_modification(customer)
+            new_mail = View.new_mail_customer_prompt(customer.full_name)
+            self.modify_customer(customer, "mail", new_mail)
         elif choice == "3":
-            cls.customer_phone_modification(customer)
+            new_phone = View.new_phone_customer_prompt(customer.full_name)
+            self.modify_customer(customer, "phone", new_phone)
         elif choice == "4":
-            cls.customer_company_modification(customer)
+            new_company_name = View.new_company_prompt(customer.full_name)
+            self.modify_customer(customer, "company_name", new_company_name)
         elif choice == "5":
-            cls.customer_collaborator_modification(customer)
+            self.customer_collaborator_modification(customer)
         else:
             return
 

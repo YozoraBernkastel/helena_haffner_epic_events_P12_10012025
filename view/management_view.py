@@ -16,11 +16,6 @@ class ManagementView(View):
 
         return cls.choice_loop(cls.category_question(), choices_list)
 
-    @staticmethod
-    def asks_username(complete: str = "") -> str:
-        question = f'Nom du collaborateur {complete}:'
-        return View.no_blank_answer(question)
-
     @classmethod
     def asks_collab_password(cls) -> str:
         return cls.asks_password_template("Définissez son mot de passe:")
