@@ -47,7 +47,6 @@ class Collaborator(Model):
     @classmethod
     def find_last_user_session(cls, user_id: int) -> object | None:
         user = cls.get_or_none(id=user_id)
-        print(user)
 
         if user is not None:
             return user
@@ -65,7 +64,7 @@ class Customer(Model):
     company_name = CharField(max_length=150)
     creation_date = DateTimeField(default=datetime.now())
     last_update = DateTimeField(default=datetime.now())
-    collaborator_id = ForeignKeyField(Collaborator, backref="customers")
+    collaborator = ForeignKeyField(Collaborator, backref="customers")
     information = CharField()
 
     class Meta:
@@ -73,7 +72,7 @@ class Customer(Model):
 
 
 class Contract(Model):
-    client_id = ForeignKeyField(Customer, backref="contracts")
+    customer = ForeignKeyField(Customer, backref="contracts")
     collaborator = ForeignKeyField(Collaborator, backref="contracts")
     total_value = DoubleField()
     remains_to_be_paid = DoubleField()
