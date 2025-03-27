@@ -1,12 +1,13 @@
 from view.generic_view import View
 from models.db_models import Collaborator, Customer, Event
 from settings.settings import SALES
+from datetime import datetime
 
 
 class GenericController:
     @staticmethod
     def is_quitting(choice: str) -> bool:
-        return choice.lower() == "q"
+        return choice.lower().strip() == "q"
 
     @staticmethod
     def is_available_username(username: str) -> bool:
@@ -78,3 +79,15 @@ class GenericController:
         customer.collaborator = collaborator
         customer.save()
         View.modification_done()
+
+    @staticmethod
+    def convert_str_in_datetime(date_str: str, hour_str: str) -> datetime | None:
+        date: list = date_str.split("/")
+        hour: list = hour_str.split("h")
+        try:
+            date = [int(num) for num in date]
+            hour = [int(num) for num in hour]
+            return datetime(date[2], date[1], date[0], hour[0], hour[1])
+        except:
+            return None
+

@@ -140,6 +140,11 @@ class View:
         return View.no_blank_answer(question)
 
     @staticmethod
+    def asks_contract_name():
+        print("Quel est le nom du contrat ?")
+        return input("").strip()
+
+    @staticmethod
     def missing_collaborator(username: str) -> None:
         print(f"Le collaborateur {username} n'est pas présent dans la base de données")
 
@@ -210,3 +215,17 @@ class View:
         print(f"   Nombre de participants : {event.attendant_number}")
         print(f"   Technicient : {event.support}")
         print(f"   Commentaires : {event.comment}\n")
+
+    @classmethod
+    def asks_event_date(cls, is_starting=True) -> tuple[str, str]:
+        context: str = "débutera" if is_starting else "terminera"
+
+        cls.quit_print(f"Quel jour {context} l'évenément ? -- au format JJ/MM/YYYY")
+        date_info: str = input("").strip()
+
+        cls.quit_print("À quelle heure ? -- au format 18h30  ")
+        hour_info: str = input("").strip()
+
+        return date_info, hour_info
+
+

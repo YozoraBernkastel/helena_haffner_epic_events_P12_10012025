@@ -19,7 +19,7 @@ class SalesView(View):
 
     @classmethod
     def menu(cls) -> str:
-        choices_list: list = ["Mes Clients", "Mes Contrats", "Mes Événements", "Mon Compte"]
+        choices_list: list = ["Mes Clients", "Mes Contrats", "Créer un Événement", "Mon Compte"]
         return cls.choice_loop(cls.category_question(), choices_list)
 
     @classmethod
@@ -95,3 +95,13 @@ class SalesView(View):
         print(f"   Créé le : {customer.creation_date}")
         print(f"   Nom de son contact : {customer.collaborator.username}")
         print(f"   Informations complémentaires : {customer.information}\n")
+
+    @classmethod
+    def asks_event_address(cls):
+        cls.quit_print("À quelle adresse aura lieu l'événement ?")
+        return input("")
+
+    @classmethod
+    def asks_number_of_participants(cls):
+        cls.quit_print("Combien de personnes participeront-elles à l'événement ?")
+        return input("").strip()

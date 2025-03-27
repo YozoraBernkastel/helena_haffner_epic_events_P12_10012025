@@ -128,6 +128,7 @@ class ManagementController(GenericController):
 
     def contract_creation(self):
         already_used_name = True
+        pass
 
     def contracts_menu(self) -> None:
         choice = View.contract_menu()
@@ -142,12 +143,6 @@ class ManagementController(GenericController):
             self.contracts_list()
         if choice == "4":
             self.contract_detail()
-
-    def events_menu(self):
-        choice = View.events_menu()
-
-
-
 
     def home_menu(self) -> None:
         while True:

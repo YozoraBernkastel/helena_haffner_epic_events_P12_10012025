@@ -1,6 +1,7 @@
+from datetime import datetime
 from settings.settings import SUPPORT
 from view.sales_view import SalesView as View
-from models.db_models import Collaborator, Customer, Event
+from models.db_models import Collaborator, Customer, Event, Contract
 from control.generic_controller import GenericController
 
 
@@ -135,27 +136,75 @@ class SalesController(GenericController):
     def contracts_menu(self) -> None:
         pass
 
-    def events_creation(self) -> None:
-        event_name: str = ""
-        customer_mail: str = ""
-        support_collab: Collaborator | None = None
+    def create_specific_datetime(self, is_starting=True) -> datetime | str:
+        while True:
+            date, hour = View.asks_event_date(is_starting)
 
+            if self.is_quitting(date) or self.is_quitting(hour):
+                return "q"
+
+            formated_date = self.convert_str_in_datetime(date, hour)
+
+            if isinstance(formated_date, datetime):
+                return formated_date
+
+    def events_creation(self) -> None:
         while True:
             event_name = View.asks_event_name()
+            if self.is_quitting(event_name):
+                return
             if self.is_available_event_name(event_name):
                 break
 
         while True:
-            customer_mail = View.asks_customer_mail()
-            if not self.is_available_mail(customer_mail):
+            contract_name = View.asks_contract_name()
+            if self.is_quitting(contract_name):
+                return
+            contract = Contract.get_or_none(name=contract_name)
+            if isinstance(contract, Contract):
                 break
 
         while True:
-            support_collab = View.asks_collab(SUPPORT)
-            if not self.is_existing_collab():
+            customer_mail = View.asks_customer_mail()
+            if self.is_quitting(customer_mail):
+                return
+            if not self.is_available_mail(customer_mail):
+                customer = Customer.get_or_none(mail=customer_mail)
                 break
 
+        while True:
+            support_name: str = View.asks_username("appartenant au support")
+            if self.is_quitting(support_name):
+                return
 
+            support_collab = Collaborator.get_or_none(username=support_name, role=SUPPORT)
+            if isinstance(support_collab, Collaborator):
+                break
+
+        starting_date = self.create_specific_datetime()
+        if self.is_quitting(starting_date):
+            return
+        ending_date = self.create_specific_datetime(is_starting=False)
+        if self.is_quitting(ending_date):
+            return
+
+        address = View.asks_event_address()
+        if self.is_quitting(address):
+            return
+
+        while True:
+            attendant_participant = View.asks_number_of_participants()
+            if self.is_quitting(attendant_participant):
+                return
+            if attendant_participant.isdigit():
+                attendant_participant = int(attendant_participant)
+                break
+
+        comment = View.asks_info()
+
+        Event.create(name=event_name, contract=contract, customer=customer, starting_date=starting_date,
+                     ending_date=ending_date, support=support_collab, address=address,
+                     attendant_participant=attendant_participant, comment=comment)
 
     def home_menu(self) -> None:
         while True:
