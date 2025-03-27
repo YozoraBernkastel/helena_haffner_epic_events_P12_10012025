@@ -23,11 +23,6 @@ class SalesView(View):
         return cls.choice_loop(cls.category_question(), choices_list)
 
     @classmethod
-    def asks_customer_mail(cls) -> str:
-        cls.quit_print("Veuillez renseigner l'adresse email du client")
-        return input("").strip()
-
-    @classmethod
     def new_customer_name(cls) -> str:
         question = "Comment se nomme votre nouveau client ?"
         return cls.no_blank_answer(question)
@@ -102,6 +97,11 @@ class SalesView(View):
         return input("")
 
     @classmethod
-    def asks_number_of_participants(cls):
-        cls.quit_print("Combien de personnes participeront-elles à l'événement ?")
-        return input("").strip()
+    def asks_number_of_participants(cls) -> int | str:
+        choice: str = ""
+
+        while not choice.isdigit() or choice.lower() != "q":
+            cls.quit_print("Combien de personnes participeront-elles à l'événement ?")
+            choice = input("").strip()
+
+        return int(choice)

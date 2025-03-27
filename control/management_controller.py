@@ -127,8 +127,15 @@ class ManagementController(GenericController):
             return
 
     def contract_creation(self):
-        already_used_name = True
-        pass
+        while True:
+            contract_name: str = View.asks_contract_name()
+            if self.is_quitting(contract_name):
+                return
+            if self.is_available_contract_name(contract_name):
+                break
+
+        # todo à continuer
+
 
     def contracts_menu(self) -> None:
         choice = View.contract_menu()

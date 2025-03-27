@@ -144,6 +144,11 @@ class View:
         print("Quel est le nom du contrat ?")
         return input("").strip()
 
+    @classmethod
+    def asks_customer_mail(cls) -> str:
+        cls.quit_print("Veuillez renseigner l'adresse email du client")
+        return input("").strip()
+
     @staticmethod
     def missing_collaborator(username: str) -> None:
         print(f"Le collaborateur {username} n'est pas présent dans la base de données")

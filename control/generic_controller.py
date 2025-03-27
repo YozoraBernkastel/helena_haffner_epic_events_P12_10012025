@@ -1,13 +1,13 @@
 from view.generic_view import View
-from models.db_models import Collaborator, Customer, Event
-from settings.settings import SALES
+from models.db_models import Collaborator, Customer, Event, Contract
+from settings.settings import SALES, SUPPORT
 from datetime import datetime
 
 
 class GenericController:
     @staticmethod
     def is_quitting(choice: str) -> bool:
-        return choice.lower().strip() == "q"
+        return isinstance(choice, str) and choice.lower().strip() == "q"
 
     @staticmethod
     def is_available_username(username: str) -> bool:
@@ -20,6 +20,10 @@ class GenericController:
     @staticmethod
     def is_available_event_name(new_event_name: str) -> bool:
         return Event.get_or_none(name=new_event_name) is None
+
+    @staticmethod
+    def is_available_contract_name(new_contract_name) -> bool:
+        return Contract.get_or_none(name=new_contract_name) is None
 
     @classmethod
     def new_password(cls):
@@ -90,4 +94,30 @@ class GenericController:
             return datetime(date[2], date[1], date[0], hour[0], hour[1])
         except:
             return None
+
+    def find_contract(self) -> Contract | str:
+        while True:
+            contract_name = View.asks_contract_name()
+            contract = Contract.get_or_none(name=contract_name)
+            if self.is_quitting(contract) or isinstance(contract, Contract):
+                return contract
+
+    def find_customer(self) -> Customer | str:
+        while True:
+            customer_mail = View.asks_customer_mail()
+            if self.is_quitting(customer_mail):
+                return customer_mail
+
+            if not self.is_available_mail(customer_mail):
+                return Customer.get_or_none(mail=customer_mail)
+
+    def find_support_collab(self) -> Collaborator | str:
+        while True:
+            support_name: str = View.asks_username("appartenant au support")
+            if self.is_quitting(support_name):
+                return support_name
+
+            support_collab = Collaborator.get_or_none(username=support_name, role=SUPPORT)
+            if isinstance(support_collab, Collaborator):
+                return support_collab
 

@@ -148,38 +148,29 @@ class SalesController(GenericController):
             if isinstance(formated_date, datetime):
                 return formated_date
 
-    def events_creation(self) -> None:
+    def event_name(self) -> str:
         while True:
             event_name = View.asks_event_name()
-            if self.is_quitting(event_name):
-                return
-            if self.is_available_event_name(event_name):
-                break
+            if self.is_quitting(event_name) or self.is_available_event_name(event_name):
+                return event_name
 
-        while True:
-            contract_name = View.asks_contract_name()
-            if self.is_quitting(contract_name):
-                return
-            contract = Contract.get_or_none(name=contract_name)
-            if isinstance(contract, Contract):
-                break
+    def events_creation(self) -> None:
+        #todo voir si on peut vérifier si l'utilsiateur quitte grâce à un décorateur !!
+        event_name: str = self.event_name()
+        if self.is_quitting(event_name):
+            return
 
-        while True:
-            customer_mail = View.asks_customer_mail()
-            if self.is_quitting(customer_mail):
-                return
-            if not self.is_available_mail(customer_mail):
-                customer = Customer.get_or_none(mail=customer_mail)
-                break
+        contract: Contract | str = self.find_contract()
+        if self.is_quitting(contract):
+            return
 
-        while True:
-            support_name: str = View.asks_username("appartenant au support")
-            if self.is_quitting(support_name):
-                return
+        customer: Customer | str = self.find_customer()
+        if self.is_quitting(customer):
+            return
 
-            support_collab = Collaborator.get_or_none(username=support_name, role=SUPPORT)
-            if isinstance(support_collab, Collaborator):
-                break
+        support_collab: Collaborator | str = self.find_support_collab()
+        if self.is_quitting(support_collab):
+            return
 
         starting_date = self.create_specific_datetime()
         if self.is_quitting(starting_date):
@@ -192,13 +183,9 @@ class SalesController(GenericController):
         if self.is_quitting(address):
             return
 
-        while True:
-            attendant_participant = View.asks_number_of_participants()
-            if self.is_quitting(attendant_participant):
-                return
-            if attendant_participant.isdigit():
-                attendant_participant = int(attendant_participant)
-                break
+        attendant_participant: int | str = View.asks_number_of_participants()
+        if self.is_quitting(attendant_participant):
+            return
 
         comment = View.asks_info()
 
