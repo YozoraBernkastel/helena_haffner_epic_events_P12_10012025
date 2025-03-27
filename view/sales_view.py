@@ -1,4 +1,5 @@
 from view.generic_view import View
+from models.db_models import Customer
 
 
 class SalesView(View):
@@ -12,13 +13,13 @@ class SalesView(View):
 
     @classmethod
     def customer_menu(cls):
-        choices_list: list = ["Créer un nouveau client", "Modifier un de mes client", "Voir ma liste de clients"]
+        choices_list: list = ["Créer un nouveau client", "Modifier un de mes client",
+                              "Voir ma liste de clients", "Consulter les informations d'un client"]
         return cls.choice_loop(cls.what_to_do(), choices_list)
 
     @classmethod
     def menu(cls) -> str:
         choices_list: list = ["Mes Clients", "Mes Contrats", "Mes Événements", "Mon Compte"]
-
         return cls.choice_loop(cls.category_question(), choices_list)
 
     @classmethod
@@ -50,7 +51,8 @@ class SalesView(View):
     def customer_modification_menu(cls, customer_name) -> str:
         question = f"Quelle information du client {customer_name} souhaitez-vous modifier ?"
         choices_list = ["Modifier son nom", "Modifier son adresse mail", "Modifier son numéro de téléphone",
-                        "Modifier le nom de son entreprise", "Modifier son commercial"]
+                        "Modifier le nom de son entreprise", "Modifier son commercial",
+                        "Modifier les informations du le client"]
 
         return cls.choice_loop(question, choices_list)
 
@@ -73,3 +75,23 @@ class SalesView(View):
     def new_company_prompt(cls, customer_name) -> str:
         question = f"Quel est le nouveau nom del 'entrerprise de {customer_name} ?"
         return cls.no_blank_answer(question)
+
+    @classmethod
+    def customer_info_menu(cls):
+        choices_list = ["Ajouter des informations", "Modifier les informations", "Supprimer les informations"]
+
+        return cls.choice_loop(cls.what_to_do(), choices_list)
+
+    @staticmethod
+    def add_customer_info_prompt(customer) -> str:
+        print("Ecrivez les informations à ajouter :")
+        return input("")
+
+    @staticmethod
+    def display_customer_detail(customer: Customer):
+        print(f"\n   Nom : {customer.full_name}")
+        print(f"   Mail : {customer.mail}")
+        print(f"   Entreprise : {customer.company_name}")
+        print(f"   Créé le : {customer.creation_date}")
+        print(f"   Nom de son contact : {customer.collaborator.username}")
+        print(f"   Informations complémentaires : {customer.information}\n")
