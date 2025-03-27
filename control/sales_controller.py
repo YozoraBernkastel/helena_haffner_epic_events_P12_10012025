@@ -1,5 +1,6 @@
+from settings.settings import SUPPORT
 from view.sales_view import SalesView as View
-from models.db_models import Collaborator, Customer
+from models.db_models import Collaborator, Customer, Event
 from control.generic_controller import GenericController
 
 
@@ -114,6 +115,8 @@ class SalesController(GenericController):
             self.customer_modification_detail(customer)
         else:
             View.display_customer_detail(customer)
+            customer_events: list = Event.select().where(Event.customer == customer).execute()
+            [View.event_display(event) for event in customer_events]
 
     def customers_menu(self) -> None:
         choice = View.customer_menu()
@@ -132,8 +135,27 @@ class SalesController(GenericController):
     def contracts_menu(self) -> None:
         pass
 
-    def events_menu(self) -> None:
-        pass
+    def events_creation(self) -> None:
+        event_name: str = ""
+        customer_mail: str = ""
+        support_collab: Collaborator | None = None
+
+        while True:
+            event_name = View.asks_event_name()
+            if self.is_available_event_name(event_name):
+                break
+
+        while True:
+            customer_mail = View.asks_customer_mail()
+            if not self.is_available_mail(customer_mail):
+                break
+
+        while True:
+            support_collab = View.asks_collab(SUPPORT)
+            if not self.is_existing_collab():
+                break
+
+
 
     def home_menu(self) -> None:
         while True:
@@ -144,9 +166,8 @@ class SalesController(GenericController):
             elif choice == "2":
                 self.contracts_menu()
             elif choice == "3":
-                self.events_menu()
+                self.events_creation()
             elif choice == "4":
                 self.account_menu(self.user)
             else:
                 return
-

@@ -39,6 +39,12 @@ class ManagementView(View):
         print(f"Confirmer la suppression du compte de {username}")
         return cls.yes_or_no_choice()
 
+    @classmethod
+    def contract_menu(cls) -> str:
+        choices = ["Créer un contrat", "Modifier un contrat",
+                   "Voir la liste des contrats", "Voir les informations d'un contrat"]
+        return cls.choice_loop(cls.what_to_do(), choices)
+
 
 
 

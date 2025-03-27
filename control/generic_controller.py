@@ -1,5 +1,5 @@
 from view.generic_view import View
-from models.db_models import Collaborator, Customer
+from models.db_models import Collaborator, Customer, Event
 from settings.settings import SALES
 
 
@@ -15,6 +15,10 @@ class GenericController:
     @staticmethod
     def is_available_mail(new_mail: str) -> bool:
         return Customer.get_or_none(mail=new_mail) is None
+
+    @staticmethod
+    def is_available_event_name(new_event_name: str) -> bool:
+        return Event.get_or_none(name=new_event_name) is None
 
     @classmethod
     def new_password(cls):

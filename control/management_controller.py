@@ -126,6 +126,29 @@ class ManagementController(GenericController):
         else:
             return
 
+    def contract_creation(self):
+        already_used_name = True
+
+    def contracts_menu(self) -> None:
+        choice = View.contract_menu()
+
+        if choice == "1":
+            self.contract_creation()
+        if choice == "2":
+            # todo pourrait être utilisé à la fois par management et sales mais les restrictions ne sont pas les mêmes
+            #  puisque les commerciaux n'ont accès qu'à leurs clients, ce qui ne semble pas être le cas pour les gestionnaires
+            self.contract_modification()
+        if choice == "3":
+            self.contracts_list()
+        if choice == "4":
+            self.contract_detail()
+
+    def events_menu(self):
+        choice = View.events_menu()
+
+
+
+
     def home_menu(self) -> None:
         while True:
             choice = View.menu()

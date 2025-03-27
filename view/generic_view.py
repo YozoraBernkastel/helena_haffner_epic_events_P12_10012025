@@ -1,5 +1,6 @@
 from getpass import getpass
 from settings.settings import MANAGEMENT, SUPPORT, SALES
+from models.db_models import Event
 
 
 class View:
@@ -192,3 +193,20 @@ class View:
     @staticmethod
     def unknown_sales_collaborator(collab_name: str) -> None:
         print(f"Le collaborateur {collab_name} n'existe pas ou n'appartient pas au département commercial.")
+
+    @classmethod
+    def asks_event_name(cls) -> str:
+        cls.quit_print("Comment se nomme l'événement ?")
+        return input("")
+
+    @staticmethod
+    def event_display(event: Event) -> None:
+        print(f"\n   Nom :{event.name}")
+        print(f"   Nom du client : {event.customer.full_name}")
+        print(f"   Contrat : {event.contract.name}")
+        print(f"   Début : {event.starting_time}")
+        print(f"   Fin : {event.ending_time}")
+        print(f"   Adresse : {event.address}")
+        print(f"   Nombre de participants : {event.attendant_number}")
+        print(f"   Technicient : {event.support}")
+        print(f"   Commentaires : {event.comment}\n")

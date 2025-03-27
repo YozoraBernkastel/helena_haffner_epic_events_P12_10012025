@@ -77,7 +77,7 @@ class SalesView(View):
         return cls.no_blank_answer(question)
 
     @classmethod
-    def customer_info_menu(cls):
+    def customer_info_menu(cls) -> str:
         choices_list = ["Ajouter des informations", "Modifier les informations", "Supprimer les informations"]
 
         return cls.choice_loop(cls.what_to_do(), choices_list)

@@ -72,6 +72,7 @@ class Customer(Model):
 
 
 class Contract(Model):
+    name = CharField(unique=True)
     customer = ForeignKeyField(Customer, backref="contracts")
     collaborator = ForeignKeyField(Collaborator, backref="contracts")
     total_value = DoubleField()
@@ -86,7 +87,7 @@ class Contract(Model):
 class Event(Model):
     name = CharField(unique=True)
     contract = ForeignKeyField(Contract, backref="events")
-    client = ForeignKeyField(Customer, backref="events")
+    customer = ForeignKeyField(Customer, backref="events")
     starting_time = DateTimeField()
     ending_time = DateTimeField()
     support = ForeignKeyField(Collaborator, backref="support_events")
