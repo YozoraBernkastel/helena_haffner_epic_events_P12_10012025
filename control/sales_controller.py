@@ -53,6 +53,28 @@ class SalesController(GenericController):
         customer.save()
         View.modification_done()
 
+    @staticmethod
+    def add_customer_info(customer: Customer, old_info: str = "") -> None:
+        new_info = View.add_customer_info_prompt(customer)
+        customer.information = f"{old_info}{new_info}"
+        customer.save()
+        View.modification_done()
+
+    def information_modification(self, customer: Customer) -> None:
+        choice = View.customer_info_menu()
+
+        if choice == "1":
+            old_info = f"{customer.information}\n" if len(customer.information) > 0 else ""
+            self.add_customer_info(customer, old_info)
+        elif choice == "2":
+            self.add_customer_info(customer)
+        elif choice == "3":
+            customer.information = ""
+            customer.save()
+            View.modification_done()
+        else:
+            return
+
     def customer_modification_detail(self, customer: Customer):
         choice = View.customer_modification_menu(customer.full_name)
 
@@ -70,10 +92,13 @@ class SalesController(GenericController):
             self.modify_customer(customer, "company_name", new_company_name)
         elif choice == "5":
             self.customer_collaborator_modification(customer)
+        elif choice == "6":
+            self.information_modification(customer)
+            pass
         else:
             return
 
-    def customer_modification(self) -> None:
+    def customer_detail(self, modification=False) -> None:
         customer_mail = View.asks_customer_mail()
 
         if self.is_quitting(customer_mail):
@@ -84,7 +109,11 @@ class SalesController(GenericController):
         if customer is None:
             View.unknown_customer()
             return
-        self.customer_modification_detail(customer)
+
+        if modification:
+            self.customer_modification_detail(customer)
+        else:
+            View.display_customer_detail(customer)
 
     def customers_menu(self) -> None:
         choice = View.customer_menu()
@@ -92,9 +121,11 @@ class SalesController(GenericController):
         if choice == "1":
             self.customer_creation()
         elif choice == "2":
-            self.customer_modification()
+            self.customer_detail(modification=True)
         elif choice == "3":
             self.my_customers_list()
+        elif choice == "4":
+            self.customer_detail()
         else:
             return
 
