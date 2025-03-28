@@ -65,7 +65,6 @@ class GenericController:
     def account_menu(cls, user):
         # todo à compléter avec le changement de nom d'utilisateur
         cls.change_password(user)
-        pass
 
     def customer_collaborator_modification(self, customer) -> None:
         collab_name = View.asks_username(complete=f"auquel donner le client {customer.full_name}")
@@ -107,13 +106,28 @@ class GenericController:
             if isinstance(contract, Contract):
                 return contract
 
+            #todo mettre un message pour dire que le contrat n'a pas été trouvé
+
+    @staticmethod
+    def all_contracts_list():
+        all_contracts = Contract.select()
+        [View.contract_display(contract) for contract in all_contracts]
+
+    @classmethod
+    def contract_detail_modification(cls):
+        contract: Contract | str = cls.find_contract()
+        if cls.is_quitting(contract):
+            return
+
+        View.contract_display(contract)
+        View.contract_modification_prompt()
+
     @staticmethod
     def choose_role_context(role: str) -> str:
         if role == MANAGEMENT:
             return "de la gestion"
         if role == SALES:
             return "du département commercial"
-
         return "du support"
 
     @classmethod

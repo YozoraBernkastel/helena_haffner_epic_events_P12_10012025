@@ -141,8 +141,18 @@ class SalesController(GenericController):
             return
 
     def contracts_menu(self) -> None:
+        choice = View.sales_collab_contract_menu()
         my_contracts = Contract.select().where(Contract.collaborator == self.user).execute()
-        [View.contract_display(contract) for contract in my_contracts]
+
+        if choice == "1":
+            [View.contract_display(contract) for contract in my_contracts]
+        elif choice == "2":
+            without_event = [contract for contract in my_contracts if Event.get_or_none(contract=contract) is None]
+            [View.no_event_contract(contract) for contract in without_event]
+        elif choice == "3":
+            self.contract_detail_modification()
+        else:
+            return
 
     def create_specific_datetime(self, is_starting=True) -> datetime | str:
         while True:
@@ -171,8 +181,8 @@ class SalesController(GenericController):
         if self.is_quitting(contract):
             return
 
-        customer: Customer | str = self.find_customer(self.user)
-        if self.is_quitting(customer):
+        if contract.collaborator is not self.user:
+            print("Vous ne faites pas parti de ce contrat et ne pouvez donc pas créer d'événement qui lui soit lié.")
             return
 
         support_collab: Collaborator | str = self.find_collab(SUPPORT)
@@ -196,7 +206,7 @@ class SalesController(GenericController):
 
         comment = View.asks_info()
 
-        Event.create(name=event_name, contract=contract, customer=customer, starting_date=starting_date,
+        Event.create(name=event_name, contract=contract, starting_date=starting_date,
                      ending_date=ending_date, support=support_collab, address=address,
                      attendant_participant=attendant_participant, comment=comment)
 

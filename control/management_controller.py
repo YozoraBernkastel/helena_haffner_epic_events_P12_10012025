@@ -113,7 +113,6 @@ class ManagementController(GenericController):
         pass
 
     def collab_menu(self) -> None:
-
         choice = View.collab_menu()
 
         if choice == "1":
@@ -148,19 +147,22 @@ class ManagementController(GenericController):
 
         View.create_with_success(f"du contrat {contract_name}")
 
+    def contract_modification(self):
+        pass
+
     def contracts_menu(self) -> None:
         choice = View.contract_menu()
 
         if choice == "1":
             self.contract_creation()
-        if choice == "2":
-            # todo pourrait être utilisé à la fois par management et sales mais les restrictions ne sont pas les mêmes
-            #  puisque les commerciaux n'ont accès qu'à leurs clients, ce qui ne semble pas être le cas pour les gestionnaires
+        elif choice == "2":
             self.contract_modification()
-        if choice == "3":
-            self.contracts_list()
-        if choice == "4":
-            self.contract_detail()
+        elif choice == "3":
+            self.all_contracts_list()
+        elif choice == "4":
+            self.contract_detail_modification()
+        else:
+            return
 
     def home_menu(self) -> None:
         while True:

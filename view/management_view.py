@@ -47,6 +47,7 @@ class ManagementView(View):
 
     @classmethod
     def asks_contract_total_value(cls):
+        # todo possible utiliser la lib mock pour utiliser le décorateur side_effect, permettant d'entrer des inputs
         while True:
             print("Quel est le montant total du contrat ?")
             price = input("").strip()
@@ -59,9 +60,7 @@ class ManagementView(View):
             if len(check_price) == 2:
                 price = '.'.join(check_price)
 
-            return float(price)
-
-
-
-
-
+            try:
+                return float(price)
+            except:
+                print("Erreur dans le montant.")

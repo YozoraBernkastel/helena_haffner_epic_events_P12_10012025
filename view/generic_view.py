@@ -213,6 +213,11 @@ class View:
         cls.quit_print("Comment se nomme l'événement ?")
         return input("")
 
+    @classmethod
+    def contract_modification_prompt(cls):
+        choices: list = [""]
+        return cls.choice_loop(cls.what_to_do(), choices)
+
     @staticmethod
     def contract_display(contract: Contract):
         print(f"\n   Nom :{contract.name}")

@@ -1,5 +1,5 @@
 from view.generic_view import View
-from models.db_models import Customer
+from models.db_models import Customer, Contract
 
 
 class SalesView(View):
@@ -105,3 +105,15 @@ class SalesView(View):
             choice = input("").strip()
 
         return int(choice)
+
+    @classmethod
+    def sales_collab_contract_menu(cls):
+        choices = ["Voir mes contrats", "Voir mes contrats n'ayant pas encore d'événement",
+                   "Modifier un contrat"]
+        return cls.choice_loop(cls.what_to_do(), choices).strip()
+
+    @staticmethod
+    def no_event_contract(contract: Contract):
+        print(f"\n   Nom du contrat : {contract.name}")
+        print(f"   Mail du client : {contract.customer.mail}\n")
+

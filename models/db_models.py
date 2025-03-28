@@ -87,7 +87,6 @@ class Contract(Model):
 class Event(Model):
     name = CharField(unique=True)
     contract = ForeignKeyField(Contract, backref="events")
-    customer = ForeignKeyField(Customer, backref="events")
     starting_time = DateTimeField()
     ending_time = DateTimeField()
     support = ForeignKeyField(Collaborator, backref="support_events", null=True)
@@ -97,3 +96,6 @@ class Event(Model):
 
     class Meta:
         database = db
+
+
+# charfield, textifield, imagefield, filefield et emailfield ne peuvent pas être null !!
