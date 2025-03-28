@@ -45,6 +45,21 @@ class ManagementView(View):
                    "Voir la liste des contrats", "Voir les informations d'un contrat"]
         return cls.choice_loop(cls.what_to_do(), choices)
 
+    @classmethod
+    def asks_contract_total_value(cls):
+        while True:
+            print("Quel est le montant total du contrat ?")
+            price = input("").strip()
+            check_price = price.split(",")
+
+            if len(check_price) > 2:
+                print("Erreur dans le montant.")
+                continue
+
+            if len(check_price) == 2:
+                price = '.'.join(check_price)
+
+            return float(price)
 
 
 

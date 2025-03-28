@@ -1,6 +1,6 @@
 from view.generic_view import View
 from models.db_models import Collaborator, Customer, Event, Contract
-from settings.settings import SALES, SUPPORT
+from settings.settings import MANAGEMENT, SALES, SUPPORT
 from datetime import datetime
 
 
@@ -93,31 +93,50 @@ class GenericController:
             hour = [int(num) for num in hour]
             return datetime(date[2], date[1], date[0], hour[0], hour[1])
         except:
+            print("Cette date n'existe pas.")
             return None
 
-    def find_contract(self) -> Contract | str:
+    @classmethod
+    def find_contract(cls) -> Contract | str:
         while True:
             contract_name = View.asks_contract_name()
+            if cls.is_quitting(contract_name):
+                return contract_name
+
             contract = Contract.get_or_none(name=contract_name)
-            if self.is_quitting(contract) or isinstance(contract, Contract):
+            if isinstance(contract, Contract):
                 return contract
 
-    def find_customer(self) -> Customer | str:
+    @staticmethod
+    def choose_role_context(role: str) -> str:
+        if role == MANAGEMENT:
+            return "de la gestion"
+        if role == SALES:
+            return "du département commercial"
+
+        return "du support"
+
+    @classmethod
+    def find_collab(cls, role: str) -> Collaborator | str:
+        context = cls.choose_role_context(role)
         while True:
-            customer_mail = View.asks_customer_mail()
-            if self.is_quitting(customer_mail):
-                return customer_mail
+            collab_name: str = View.asks_username(context)
+            if cls.is_quitting(collab_name):
+                return collab_name
 
-            if not self.is_available_mail(customer_mail):
-                return Customer.get_or_none(mail=customer_mail)
-
-    def find_support_collab(self) -> Collaborator | str:
-        while True:
-            support_name: str = View.asks_username("appartenant au support")
-            if self.is_quitting(support_name):
-                return support_name
-
-            support_collab = Collaborator.get_or_none(username=support_name, role=SUPPORT)
+            support_collab = Collaborator.get_or_none(username=collab_name, role=role)
             if isinstance(support_collab, Collaborator):
                 return support_collab
 
+    @classmethod
+    def find_customer(cls, collaborator: Collaborator) -> Customer | str:
+        while True:
+            customer_mail = View.asks_customer_mail()
+            if cls.is_quitting(customer_mail):
+                return customer_mail
+
+            customer = Customer.get_or_none(mail=customer_mail, collaborator=collaborator)
+            if customer is not None:
+                return customer
+
+            View.unknown_customer()

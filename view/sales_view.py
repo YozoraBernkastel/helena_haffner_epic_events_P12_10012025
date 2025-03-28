@@ -13,8 +13,8 @@ class SalesView(View):
 
     @classmethod
     def customer_menu(cls):
-        choices_list: list = ["Créer un nouveau client", "Modifier un de mes client",
-                              "Voir ma liste de clients", "Consulter les informations d'un client"]
+        choices_list: list = ["Créer un nouveau client", "Modifier un de mes client", "Voir ma liste de clients",
+                              "Consulter les informations d'un client", "Supprimer un Client"]
         return cls.choice_loop(cls.what_to_do(), choices_list)
 
     @classmethod

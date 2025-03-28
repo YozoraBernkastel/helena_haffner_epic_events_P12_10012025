@@ -1,6 +1,7 @@
 from view.management_view import ManagementView as View
 from control.generic_controller import GenericController
-from models.db_models import Collaborator
+from models.db_models import Collaborator, Contract
+from settings.settings import SALES
 
 
 class ManagementController(GenericController):
@@ -32,7 +33,7 @@ class ManagementController(GenericController):
             return
 
         Collaborator.create_collab(username, password, role)
-        print(f"Collaborateur {username} créé !")
+        View.create_with_success(f"du collaborateur {username}")
 
     def username_change(self, collaborator: Collaborator) -> None:
         while True:
@@ -134,8 +135,18 @@ class ManagementController(GenericController):
             if self.is_available_contract_name(contract_name):
                 break
 
-        # todo à continuer
+        sales_collab = self.find_collab(SALES)
+        if self.is_quitting(sales_collab):
+            return
+        customer = self.find_customer(sales_collab)
+        if self.is_quitting(customer):
+            return
+        total_value = View.asks_contract_total_value()
 
+        Contract.create(name=contract_name, customer=customer, collaborator=sales_collab, total_value=total_value,
+                        remains_to_be_paid=total_value)
+
+        View.create_with_success(f"du contrat {contract_name}")
 
     def contracts_menu(self) -> None:
         choice = View.contract_menu()

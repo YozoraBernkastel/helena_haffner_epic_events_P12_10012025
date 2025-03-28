@@ -1,6 +1,6 @@
 from getpass import getpass
 from settings.settings import MANAGEMENT, SUPPORT, SALES
-from models.db_models import Event
+from models.db_models import Event, Contract
 
 
 class View:
@@ -40,6 +40,10 @@ class View:
             return True
 
         return False
+
+    @staticmethod
+    def create_with_success(obj: str) -> None:
+        print(f"Création {obj} terminée !")
 
     @staticmethod
     def remember_me() -> bool:
@@ -208,6 +212,17 @@ class View:
     def asks_event_name(cls) -> str:
         cls.quit_print("Comment se nomme l'événement ?")
         return input("")
+
+    @staticmethod
+    def contract_display(contract: Contract):
+        print(f"\n   Nom :{contract.name}")
+        print(f"   Nom du client : {contract.customer.full_name}")
+        print(f"   Entreprise du client : {contract.customer.company_name}")
+        print(f"   Nom du commercial :{contract.collaborator.username}")
+        print(f"   Montant total :{contract.total_value}")
+        print(f"   Reste à payer :{contract.remains_to_be_paid}")
+        is_signed: str = "Oui" if contract.signed else "Non"
+        print(f"   Signé :{is_signed}\n")
 
     @staticmethod
     def event_display(event: Event) -> None:
