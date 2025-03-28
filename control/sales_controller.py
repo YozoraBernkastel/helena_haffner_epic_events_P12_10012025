@@ -1,4 +1,6 @@
 from datetime import datetime
+from xmlrpc.client import DateTime
+
 from settings.settings import SUPPORT
 from view.sales_view import SalesView as View
 from models.db_models import Collaborator, Customer, Event, Contract
@@ -150,7 +152,7 @@ class SalesController(GenericController):
             without_event = [contract for contract in my_contracts if Event.get_or_none(contract=contract) is None]
             [View.no_event_contract(contract) for contract in without_event]
         elif choice == "3":
-            self.contract_detail_modification()
+            self.contract_detail_modification(self.user)
         else:
             return
 
@@ -181,34 +183,36 @@ class SalesController(GenericController):
         if self.is_quitting(contract):
             return
 
-        if contract.collaborator is not self.user:
-            print("Vous ne faites pas parti de ce contrat et ne pouvez donc pas créer d'événement qui lui soit lié.")
+        if contract.collaborator != self.user:
+            View.access_denied()
             return
 
         support_collab: Collaborator | str = self.find_collab(SUPPORT)
         if self.is_quitting(support_collab):
             return
 
-        starting_date = self.create_specific_datetime()
+        starting_date: datetime | str = self.create_specific_datetime()
         if self.is_quitting(starting_date):
             return
-        ending_date = self.create_specific_datetime(is_starting=False)
+        ending_date: datetime | str = self.create_specific_datetime(is_starting=False)
         if self.is_quitting(ending_date):
             return
 
-        address = View.asks_event_address()
+        print(starting_date)
+
+        address: str = View.asks_event_address()
         if self.is_quitting(address):
             return
 
-        attendant_participant: int | str = View.asks_number_of_participants()
+        attendant_participant = View.asks_number_of_participants()
         if self.is_quitting(attendant_participant):
             return
 
         comment = View.asks_info()
 
-        Event.create(name=event_name, contract=contract, starting_date=starting_date,
-                     ending_date=ending_date, support=support_collab, address=address,
-                     attendant_participant=attendant_participant, comment=comment)
+        Event.create(name=event_name, contract=contract, starting_time=starting_date,
+                     ending_time=ending_date, support=support_collab, address=address,
+                     attendant_number=attendant_participant, comment=comment)
 
         View.create_with_success(f"de l'événement {event_name}")
 

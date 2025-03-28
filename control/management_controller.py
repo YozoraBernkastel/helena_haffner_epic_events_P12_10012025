@@ -147,20 +147,17 @@ class ManagementController(GenericController):
 
         View.create_with_success(f"du contrat {contract_name}")
 
-    def contract_modification(self):
-        pass
-
     def contracts_menu(self) -> None:
         choice = View.contract_menu()
 
         if choice == "1":
             self.contract_creation()
         elif choice == "2":
-            self.contract_modification()
+            self.contract_detail_modification(self.user)
         elif choice == "3":
             self.all_contracts_list()
         elif choice == "4":
-            self.contract_detail_modification()
+            self.contract_detail()
         else:
             return
 

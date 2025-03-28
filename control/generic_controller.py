@@ -114,13 +114,31 @@ class GenericController:
         [View.contract_display(contract) for contract in all_contracts]
 
     @classmethod
-    def contract_detail_modification(cls):
+    def contract_detail_modification(cls, collaborator):
         contract: Contract | str = cls.find_contract()
         if cls.is_quitting(contract):
             return
 
+        if contract.collaborator != collaborator and collaborator.role != MANAGEMENT:
+            View.access_denied()
+            return
+
         View.contract_display(contract)
-        View.contract_modification_prompt()
+        is_already_signed: bool = contract.signed
+        choice = View.contract_modification_prompt(collaborator.role, is_already_signed)
+
+        if choice == "1":
+            cls.contract_name_modification(contract)
+        elif choice == "2":
+            cls.update_remain_to_be_paid(contract)
+        elif choice == "3" and not is_already_signed:
+            contract.signed = True
+            contract.save()
+        elif collaborator.role == MANAGEMENT:
+            if choice == "4" and not is_already_signed or choice == "3":
+                cls.change_contract_collaborator(contract)
+        else:
+            return
 
     @staticmethod
     def choose_role_context(role: str) -> str:

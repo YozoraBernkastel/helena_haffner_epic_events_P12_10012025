@@ -28,6 +28,10 @@ class View:
         print("Ce client est n'existe pas.")
 
     @staticmethod
+    def access_denied():
+        print("Vous n'avez pas l'autorisation d'accéder à ceci.")
+
+    @staticmethod
     def bad_password() -> None:
         print("Vous avez donné un mauvais mot de passe.")
 
@@ -43,7 +47,7 @@ class View:
 
     @staticmethod
     def create_with_success(obj: str) -> None:
-        print(f"Création {obj} terminée !")
+        print(f"Création {obj} terminée !\n")
 
     @staticmethod
     def remember_me() -> bool:
@@ -214,8 +218,14 @@ class View:
         return input("")
 
     @classmethod
-    def contract_modification_prompt(cls):
-        choices: list = [""]
+    def contract_modification_prompt(cls, role: str, is_already_signed: bool):
+        choices: list = ["Modifier le nom du contrat", "Mettre à jour le montant payé", ]
+
+        if not is_already_signed:
+            choices.append("Valider la signature du contrat")
+        if role == MANAGEMENT:
+            choices.append("Modifier le commercial")
+
         return cls.choice_loop(cls.what_to_do(), choices)
 
     @staticmethod

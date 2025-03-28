@@ -100,9 +100,11 @@ class SalesView(View):
     def asks_number_of_participants(cls) -> int | str:
         choice: str = ""
 
-        while not choice.isdigit() or choice.lower() != "q":
+        while not choice.isdigit():
             cls.quit_print("Combien de personnes participeront-elles à l'événement ?")
             choice = input("").strip()
+            if choice.strip().lower() == "q":
+                return choice
 
         return int(choice)
 
