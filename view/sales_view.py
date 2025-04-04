@@ -110,7 +110,7 @@ class SalesView(View):
 
     @classmethod
     def sales_collab_contract_menu(cls):
-        choices = ["Voir mes contrats", "Voir mes contrats n'ayant pas encore d'événement",
+        choices = ["Voir mes contrats", "Voir mes contrats n'ayant pas encore d'événement", "Voir un contrat",
                    "Modifier un contrat"]
         return cls.choice_loop(cls.what_to_do(), choices).strip()
 

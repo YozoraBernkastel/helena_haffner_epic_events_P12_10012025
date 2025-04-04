@@ -6,7 +6,7 @@ from datetime import datetime
 
 class GenericController:
     @staticmethod
-    def is_quitting(choice: str) -> bool:
+    def is_quitting(choice: any) -> bool:
         return isinstance(choice, str) and choice.lower().strip() == "q"
 
     @staticmethod
@@ -106,7 +106,7 @@ class GenericController:
             if isinstance(contract, Contract):
                 return contract
 
-            #todo mettre un message pour dire que le contrat n'a pas été trouvé
+            View.unknown_contract(contract_name)
 
     @staticmethod
     def all_contracts_list():
@@ -114,7 +114,20 @@ class GenericController:
         [View.contract_display(contract) for contract in all_contracts]
 
     @classmethod
-    def contract_detail_modification(cls, collaborator):
+    def change_contract_collaborator(cls, contract_name: str) -> Collaborator | str:
+        while True:
+            collab_username = View.asks_username(f"qui s'occupera désormais du contrat {contract_name}")
+            if cls.is_quitting(collab_username):
+                return collab_username
+
+            collab: Collaborator | None = Collaborator.get_or_none(username=collab_username)
+            if collab is not None and collab.role == SALES:
+                return collab
+
+            View.unknown_sales_collaborator(collab_username)
+
+    @classmethod
+    def contract_detail_modification(cls, collaborator: Collaborator) -> None:
         contract: Contract | str = cls.find_contract()
         if cls.is_quitting(contract):
             return
@@ -124,21 +137,25 @@ class GenericController:
             return
 
         View.contract_display(contract)
-        is_already_signed: bool = contract.signed
-        choice = View.contract_modification_prompt(collaborator.role, is_already_signed)
+        choice = View.contract_modification_prompt(collaborator.role, contract.signed)
 
         if choice == "1":
-            cls.contract_name_modification(contract)
+            contract.name = View.asks_contract_new_name(contract.name)
         elif choice == "2":
-            cls.update_remain_to_be_paid(contract)
-        elif choice == "3" and not is_already_signed:
-            contract.signed = True
-            contract.save()
+            contract.remains_to_be_paid = View.update_contract_remain(contract.remains_to_be_paid)
+        elif choice == "3" and not contract.signed:
+            contract.signed = View.signed_contract_prompt()
         elif collaborator.role == MANAGEMENT:
-            if choice == "4" and not is_already_signed or choice == "3":
-                cls.change_contract_collaborator(contract)
+            if choice == "4" and not contract.signed or choice == "3":
+                collaborator = cls.change_contract_collaborator(contract.name)
+                if cls.is_quitting(collaborator):
+                    return
+                contract.collaborator = collaborator
         else:
             return
+
+        contract.save()
+        View.modification_done()
 
     @staticmethod
     def choose_role_context(role: str) -> str:
@@ -156,9 +173,9 @@ class GenericController:
             if cls.is_quitting(collab_name):
                 return collab_name
 
-            support_collab = Collaborator.get_or_none(username=collab_name, role=role)
-            if isinstance(support_collab, Collaborator):
-                return support_collab
+            collab = Collaborator.get_or_none(username=collab_name, role=role)
+            if isinstance(collab, Collaborator):
+                return collab
 
     @classmethod
     def find_customer(cls, collaborator: Collaborator) -> Customer | str:

@@ -28,6 +28,10 @@ class View:
         print("Ce client est n'existe pas.")
 
     @staticmethod
+    def unknown_contract(contract_name: str) -> None:
+        print(f"Aucun contrat {contract_name} trouvé.")
+
+    @staticmethod
     def access_denied():
         print("Vous n'avez pas l'autorisation d'accéder à ceci.")
 
@@ -147,10 +151,49 @@ class View:
         question = f'Nom du collaborateur {complete}:'
         return View.no_blank_answer(question)
 
-    @staticmethod
-    def asks_contract_name():
-        print("Quel est le nom du contrat ?")
+    @classmethod
+    def asks_contract_name(cls, complete: str = "") -> str:
+        cls.quit_print(f"Quel est le nom du contrat {complete} ?")
         return input("").strip()
+
+    @staticmethod
+    def asks_contract_new_name(contract_name: str) -> str:
+        print(f"Quel nouveau nom souhaitez-vous donner au contrat {contract_name}?")
+        return input("").strip()
+
+    @staticmethod
+    def error_price() -> float:
+        return -1.00
+
+    @classmethod
+    def check_price_validity(cls, price: str) -> float:
+        try:
+            split_price = price.split(",")
+            price = '.'.join(split_price)
+            float_price: float = float(price)
+            assert float_price >= 0.00
+            return float_price
+        except:
+            print("Erreur dans le montant.")
+            return cls.error_price()
+
+    @classmethod
+    def update_contract_remain(cls, remain: float) -> float:
+        if remain <= 0.00:
+            print("Le contrat a déjà été payé en totalité.")
+            return 0.00
+
+        while True:
+            print(f"D'après le contrat, {remain}€ n'ont pas encore été payées.\nCombien reste-t-il désormais à payer ?")
+            new_price: str = input("").strip()
+            new_float_price = cls.check_price_validity(new_price)
+            if remain >= new_float_price > cls.error_price():
+                return new_float_price
+
+    @classmethod
+    def signed_contract_prompt(cls):
+        print("Confirmez-vous que le contrat est signé ?")
+        return cls.yes_or_no_choice()
 
     @classmethod
     def asks_customer_mail(cls) -> str:
@@ -233,11 +276,11 @@ class View:
         print(f"\n   Nom :{contract.name}")
         print(f"   Nom du client : {contract.customer.full_name}")
         print(f"   Entreprise du client : {contract.customer.company_name}")
-        print(f"   Nom du commercial :{contract.collaborator.username}")
-        print(f"   Montant total :{contract.total_value}")
-        print(f"   Reste à payer :{contract.remains_to_be_paid}")
+        print(f"   Nom du commercial : {contract.collaborator.username}")
+        print(f"   Montant total : {contract.total_value}€")
+        print(f"   Reste à payer : {contract.remains_to_be_paid}€")
         is_signed: str = "Oui" if contract.signed else "Non"
-        print(f"   Signé :{is_signed}\n")
+        print(f"   Signé : {is_signed}\n")
 
     @staticmethod
     def event_display(event: Event) -> None:

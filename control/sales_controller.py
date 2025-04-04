@@ -142,6 +142,25 @@ class SalesController(GenericController):
         else:
             return
 
+    def my_contract_detail(self, my_contract_list: list) -> None:
+        while True:
+            contract_name = View.asks_contract_name()
+            if self.is_quitting(contract_name):
+                return
+
+            my_contract: Contract | None = None
+
+            for contract in my_contract_list:
+                if contract.name == contract_name:
+                    my_contract = contract
+                    break
+
+            if my_contract is not None:
+                View.contract_display(my_contract)
+                return
+
+            View.unknown_contract(contract_name)
+
     def contracts_menu(self) -> None:
         choice = View.sales_collab_contract_menu()
         my_contracts = Contract.select().where(Contract.collaborator == self.user).execute()
@@ -152,6 +171,8 @@ class SalesController(GenericController):
             without_event = [contract for contract in my_contracts if Event.get_or_none(contract=contract) is None]
             [View.no_event_contract(contract) for contract in without_event]
         elif choice == "3":
+            self.my_contract_detail(my_contracts)
+        elif choice == "4":
             self.contract_detail_modification(self.user)
         else:
             return

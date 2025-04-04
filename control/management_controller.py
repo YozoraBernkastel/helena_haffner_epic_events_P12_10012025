@@ -1,7 +1,7 @@
 from view.management_view import ManagementView as View
 from control.generic_controller import GenericController
 from models.db_models import Collaborator, Contract
-from settings.settings import SALES
+from settings.settings import SALES, MANAGEMENT
 
 
 class ManagementController(GenericController):
@@ -105,6 +105,7 @@ class ManagementController(GenericController):
 
         if View.asks_collab_delete_confirmation(collaborator.username):
             collaborator.delete_instance()
+            View.deletion_complete()
 
     @staticmethod
     def objects_list():
@@ -147,6 +148,16 @@ class ManagementController(GenericController):
 
         View.create_with_success(f"du contrat {contract_name}")
 
+    @classmethod
+    def delete_contract(cls, user: Collaborator) -> None:
+        contract: Contract | str = cls.find_contract()
+        if cls.is_quitting(contract):
+            return
+
+        if user.role == MANAGEMENT:
+            contract.delete_instance()
+            View.deletion_complete()
+
     def contracts_menu(self) -> None:
         choice = View.contract_menu()
 
@@ -157,7 +168,10 @@ class ManagementController(GenericController):
         elif choice == "3":
             self.all_contracts_list()
         elif choice == "4":
-            self.contract_detail()
+            contract = self.find_contract()
+            View.contract_display(contract)
+        elif choice == "5":
+            self.delete_contract(self.user)
         else:
             return
 
