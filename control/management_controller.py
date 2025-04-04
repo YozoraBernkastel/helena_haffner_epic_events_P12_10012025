@@ -1,6 +1,7 @@
 from view.management_view import ManagementView as View
 from control.generic_controller import GenericController
-from models.db_models import Collaborator
+from models.db_models import Collaborator, Contract
+from settings.settings import SALES, MANAGEMENT
 
 
 class ManagementController(GenericController):
@@ -32,7 +33,7 @@ class ManagementController(GenericController):
             return
 
         Collaborator.create_collab(username, password, role)
-        print(f"Collaborateur {username} créé !")
+        View.create_with_success(f"du collaborateur {username}")
 
     def username_change(self, collaborator: Collaborator) -> None:
         while True:
@@ -104,6 +105,7 @@ class ManagementController(GenericController):
 
         if View.asks_collab_delete_confirmation(collaborator.username):
             collaborator.delete_instance()
+            View.deletion_complete()
 
     @staticmethod
     def objects_list():
@@ -112,7 +114,6 @@ class ManagementController(GenericController):
         pass
 
     def collab_menu(self) -> None:
-
         choice = View.collab_menu()
 
         if choice == "1":
@@ -123,6 +124,54 @@ class ManagementController(GenericController):
             self.collab_deletion()
         elif choice == "4":
             self.objects_list()
+        else:
+            return
+
+    def contract_creation(self):
+        while True:
+            contract_name: str = View.asks_contract_name()
+            if self.is_quitting(contract_name):
+                return
+            if self.is_available_contract_name(contract_name):
+                break
+
+        sales_collab = self.find_collab(SALES)
+        if self.is_quitting(sales_collab):
+            return
+        customer = self.find_customer(sales_collab)
+        if self.is_quitting(customer):
+            return
+        total_value = View.asks_contract_total_value()
+
+        Contract.create(name=contract_name, customer=customer, collaborator=sales_collab, total_value=total_value,
+                        remains_to_be_paid=total_value)
+
+        View.create_with_success(f"du contrat {contract_name}")
+
+    @classmethod
+    def delete_contract(cls, user: Collaborator) -> None:
+        contract: Contract | str = cls.find_contract()
+        if cls.is_quitting(contract):
+            return
+
+        if user.role == MANAGEMENT:
+            contract.delete_instance()
+            View.deletion_complete()
+
+    def contracts_menu(self) -> None:
+        choice = View.contract_menu()
+
+        if choice == "1":
+            self.contract_creation()
+        elif choice == "2":
+            self.contract_detail_modification(self.user)
+        elif choice == "3":
+            self.all_contracts_list()
+        elif choice == "4":
+            contract = self.find_contract()
+            View.contract_display(contract)
+        elif choice == "5":
+            self.delete_contract(self.user)
         else:
             return
 

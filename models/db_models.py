@@ -72,11 +72,12 @@ class Customer(Model):
 
 
 class Contract(Model):
+    name = CharField(unique=True)
     customer = ForeignKeyField(Customer, backref="contracts")
     collaborator = ForeignKeyField(Collaborator, backref="contracts")
     total_value = DoubleField()
     remains_to_be_paid = DoubleField()
-    signed = BooleanField()
+    signed = BooleanField(default=False)
     creation_date = DateTimeField(default=datetime.now())
     last_update = DateTimeField(default=datetime.now())
 
@@ -86,13 +87,15 @@ class Contract(Model):
 class Event(Model):
     name = CharField(unique=True)
     contract = ForeignKeyField(Contract, backref="events")
-    client = ForeignKeyField(Customer, backref="events")
     starting_time = DateTimeField()
     ending_time = DateTimeField()
-    support = ForeignKeyField(Collaborator, backref="support_events")
+    support = ForeignKeyField(Collaborator, backref="support_events", null=True)
     address = CharField()
     attendant_number = IntegerField()
     comment = CharField()
 
     class Meta:
         database = db
+
+
+# charfield, textifield, imagefield, filefield et emailfield ne peuvent pas être null !!

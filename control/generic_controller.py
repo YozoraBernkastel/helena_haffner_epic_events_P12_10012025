@@ -1,12 +1,13 @@
 from view.generic_view import View
-from models.db_models import Collaborator, Customer
-from settings.settings import SALES
+from models.db_models import Collaborator, Customer, Event, Contract
+from settings.settings import MANAGEMENT, SALES, SUPPORT
+from datetime import datetime
 
 
 class GenericController:
     @staticmethod
-    def is_quitting(choice: str) -> bool:
-        return choice.lower() == "q"
+    def is_quitting(choice: any) -> bool:
+        return isinstance(choice, str) and choice.lower().strip() == "q"
 
     @staticmethod
     def is_available_username(username: str) -> bool:
@@ -15,6 +16,14 @@ class GenericController:
     @staticmethod
     def is_available_mail(new_mail: str) -> bool:
         return Customer.get_or_none(mail=new_mail) is None
+
+    @staticmethod
+    def is_available_event_name(new_event_name: str) -> bool:
+        return Event.get_or_none(name=new_event_name) is None
+
+    @staticmethod
+    def is_available_contract_name(new_contract_name) -> bool:
+        return Contract.get_or_none(name=new_contract_name) is None
 
     @classmethod
     def new_password(cls):
@@ -56,7 +65,6 @@ class GenericController:
     def account_menu(cls, user):
         # todo à compléter avec le changement de nom d'utilisateur
         cls.change_password(user)
-        pass
 
     def customer_collaborator_modification(self, customer) -> None:
         collab_name = View.asks_username(complete=f"auquel donner le client {customer.full_name}")
@@ -74,3 +82,110 @@ class GenericController:
         customer.collaborator = collaborator
         customer.save()
         View.modification_done()
+
+    @staticmethod
+    def convert_str_in_datetime(date_str: str, hour_str: str) -> datetime | None:
+        date: list = date_str.split("/")
+        hour: list = hour_str.split("h")
+        try:
+            date = [int(num) for num in date]
+            hour = [int(num) for num in hour]
+            return datetime(date[2], date[1], date[0], hour[0], hour[1])
+        except:
+            print("Cette date n'existe pas.")
+            return None
+
+    @classmethod
+    def find_contract(cls) -> Contract | str:
+        while True:
+            contract_name = View.asks_contract_name()
+            if cls.is_quitting(contract_name):
+                return contract_name
+
+            contract = Contract.get_or_none(name=contract_name)
+            if isinstance(contract, Contract):
+                return contract
+
+            View.unknown_contract(contract_name)
+
+    @staticmethod
+    def all_contracts_list():
+        all_contracts = Contract.select()
+        [View.contract_display(contract) for contract in all_contracts]
+
+    @classmethod
+    def change_contract_collaborator(cls, contract_name: str) -> Collaborator | str:
+        while True:
+            collab_username = View.asks_username(f"qui s'occupera désormais du contrat {contract_name}")
+            if cls.is_quitting(collab_username):
+                return collab_username
+
+            collab: Collaborator | None = Collaborator.get_or_none(username=collab_username)
+            if collab is not None and collab.role == SALES:
+                return collab
+
+            View.unknown_sales_collaborator(collab_username)
+
+    @classmethod
+    def contract_detail_modification(cls, collaborator: Collaborator) -> None:
+        contract: Contract | str = cls.find_contract()
+        if cls.is_quitting(contract):
+            return
+
+        if contract.collaborator != collaborator and collaborator.role != MANAGEMENT:
+            View.access_denied()
+            return
+
+        View.contract_display(contract)
+        choice = View.contract_modification_prompt(collaborator.role, contract.signed)
+
+        if choice == "1":
+            contract.name = View.asks_contract_new_name(contract.name)
+        elif choice == "2":
+            contract.remains_to_be_paid = View.update_contract_remain(contract.remains_to_be_paid)
+        elif choice == "3" and not contract.signed:
+            contract.signed = View.signed_contract_prompt()
+        elif collaborator.role == MANAGEMENT:
+            if choice == "4" and not contract.signed or choice == "3":
+                collaborator = cls.change_contract_collaborator(contract.name)
+                if cls.is_quitting(collaborator):
+                    return
+                contract.collaborator = collaborator
+        else:
+            return
+
+        contract.save()
+        View.modification_done()
+
+    @staticmethod
+    def choose_role_context(role: str) -> str:
+        if role == MANAGEMENT:
+            return "de la gestion"
+        if role == SALES:
+            return "du département commercial"
+        return "du support"
+
+    @classmethod
+    def find_collab(cls, role: str) -> Collaborator | str:
+        context = cls.choose_role_context(role)
+        while True:
+            collab_name: str = View.asks_username(context)
+            if cls.is_quitting(collab_name):
+                return collab_name
+
+            collab = Collaborator.get_or_none(username=collab_name, role=role)
+            if isinstance(collab, Collaborator):
+                return collab
+
+    @classmethod
+    def find_customer(cls, collaborator: Collaborator) -> Customer | str:
+        while True:
+            customer_mail = View.asks_customer_mail()
+            if cls.is_quitting(customer_mail):
+                return customer_mail
+
+            customer = Customer.get_or_none(mail=customer_mail, collaborator=collaborator)
+            if customer is not None:
+                return customer
+
+            View.unknown_customer()

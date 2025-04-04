@@ -48,12 +48,6 @@ class Controller(GenericController):
 
         return user if is_user else None
 
-    def support_path(self):
-        pass
-
-    def sales_path(self):
-        pass
-
     def role_controller(self):
         if self.user.role == MANAGEMENT:
             return ManagementController(self.user)

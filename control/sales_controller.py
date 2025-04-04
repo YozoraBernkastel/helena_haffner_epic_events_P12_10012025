@@ -1,5 +1,9 @@
+from datetime import datetime
+from xmlrpc.client import DateTime
+
+from settings.settings import SUPPORT
 from view.sales_view import SalesView as View
-from models.db_models import Collaborator, Customer
+from models.db_models import Collaborator, Customer, Event, Contract
 from control.generic_controller import GenericController
 
 
@@ -43,6 +47,8 @@ class SalesController(GenericController):
 
         Customer.create(full_name=customer_name, mail=customer_mail, phone=customer_phone,
                         company_name=customer_company, collaborator=self.user, information=information)
+
+        View.create_with_success(f"du client {customer_name}")
 
     def modify_customer(self, customer: Customer, attribute: str, new_data: str) -> None:
         if self.is_quitting(new_data):
@@ -98,22 +104,27 @@ class SalesController(GenericController):
         else:
             return
 
-    def customer_detail(self, modification=False) -> None:
-        customer_mail = View.asks_customer_mail()
-
-        if self.is_quitting(customer_mail):
+    def customer_detail_modification(self) -> None:
+        customer = self.find_customer(collaborator=self.user)
+        if self.is_quitting(customer):
             return
 
-        customer = Customer.get_or_none(mail=customer_mail, collaborator=self.user)
+        self.customer_modification_detail(customer)
 
-        if customer is None:
-            View.unknown_customer()
+    def customer_detail(self) -> None:
+        customer = self.find_customer(collaborator=self.user)
+        if self.is_quitting(customer):
             return
 
-        if modification:
-            self.customer_modification_detail(customer)
-        else:
-            View.display_customer_detail(customer)
+        View.display_customer_detail(customer)
+        customer_events: list = Event.select().where(Event.customer == customer).execute()
+        [View.event_display(event) for event in customer_events]
+
+    def delete_customer(self) -> None:
+        customer = self.find_customer(collaborator=self.user)
+        if self.is_quitting(customer):
+            return
+        customer.delete_instance()
 
     def customers_menu(self) -> None:
         choice = View.customer_menu()
@@ -121,19 +132,110 @@ class SalesController(GenericController):
         if choice == "1":
             self.customer_creation()
         elif choice == "2":
-            self.customer_detail(modification=True)
+            self.customer_detail_modification()
         elif choice == "3":
             self.my_customers_list()
         elif choice == "4":
             self.customer_detail()
+        elif choice == "5":
+            self.delete_customer()
         else:
             return
 
-    def contracts_menu(self) -> None:
-        pass
+    def my_contract_detail(self, my_contract_list: list) -> None:
+        while True:
+            contract_name = View.asks_contract_name()
+            if self.is_quitting(contract_name):
+                return
 
-    def events_menu(self) -> None:
-        pass
+            my_contract: Contract | None = None
+
+            for contract in my_contract_list:
+                if contract.name == contract_name:
+                    my_contract = contract
+                    break
+
+            if my_contract is not None:
+                View.contract_display(my_contract)
+                return
+
+            View.unknown_contract(contract_name)
+
+    def contracts_menu(self) -> None:
+        choice = View.sales_collab_contract_menu()
+        my_contracts = Contract.select().where(Contract.collaborator == self.user).execute()
+
+        if choice == "1":
+            [View.contract_display(contract) for contract in my_contracts]
+        elif choice == "2":
+            without_event = [contract for contract in my_contracts if Event.get_or_none(contract=contract) is None]
+            [View.no_event_contract(contract) for contract in without_event]
+        elif choice == "3":
+            self.my_contract_detail(my_contracts)
+        elif choice == "4":
+            self.contract_detail_modification(self.user)
+        else:
+            return
+
+    def create_specific_datetime(self, is_starting=True) -> datetime | str:
+        while True:
+            date, hour = View.asks_event_date(is_starting)
+
+            if self.is_quitting(date) or self.is_quitting(hour):
+                return "q"
+
+            formated_date = self.convert_str_in_datetime(date, hour)
+
+            if isinstance(formated_date, datetime):
+                return formated_date
+
+    def event_name(self) -> str:
+        while True:
+            event_name = View.asks_event_name()
+            if self.is_quitting(event_name) or self.is_available_event_name(event_name):
+                return event_name
+
+    def events_creation(self) -> None:
+        event_name: str = self.event_name()
+        if self.is_quitting(event_name):
+            return
+
+        contract: Contract | str = self.find_contract()
+        if self.is_quitting(contract):
+            return
+
+        if contract.collaborator != self.user:
+            View.access_denied()
+            return
+
+        support_collab: Collaborator | str = self.find_collab(SUPPORT)
+        if self.is_quitting(support_collab):
+            return
+
+        starting_date: datetime | str = self.create_specific_datetime()
+        if self.is_quitting(starting_date):
+            return
+        ending_date: datetime | str = self.create_specific_datetime(is_starting=False)
+        if self.is_quitting(ending_date):
+            return
+
+        print(starting_date)
+
+        address: str = View.asks_event_address()
+        if self.is_quitting(address):
+            return
+
+        attendant_participant = View.asks_number_of_participants()
+        if self.is_quitting(attendant_participant):
+            return
+
+        comment = View.asks_info()
+
+        Event.create(name=event_name, contract=contract, starting_time=starting_date,
+                     ending_time=ending_date, support=support_collab, address=address,
+                     attendant_number=attendant_participant, comment=comment)
+
+        View.create_with_success(f"de l'événement {event_name}")
 
     def home_menu(self) -> None:
         while True:
@@ -144,9 +246,8 @@ class SalesController(GenericController):
             elif choice == "2":
                 self.contracts_menu()
             elif choice == "3":
-                self.events_menu()
+                self.events_creation()
             elif choice == "4":
                 self.account_menu(self.user)
             else:
                 return
-

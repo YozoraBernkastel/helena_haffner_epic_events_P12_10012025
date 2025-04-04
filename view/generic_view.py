@@ -1,5 +1,6 @@
 from getpass import getpass
 from settings.settings import MANAGEMENT, SUPPORT, SALES
+from models.db_models import Event, Contract
 
 
 class View:
@@ -27,6 +28,14 @@ class View:
         print("Ce client est n'existe pas.")
 
     @staticmethod
+    def unknown_contract(contract_name: str) -> None:
+        print(f"Aucun contrat {contract_name} trouvé.")
+
+    @staticmethod
+    def access_denied():
+        print("Vous n'avez pas l'autorisation d'accéder à ceci.")
+
+    @staticmethod
     def bad_password() -> None:
         print("Vous avez donné un mauvais mot de passe.")
 
@@ -39,6 +48,10 @@ class View:
             return True
 
         return False
+
+    @staticmethod
+    def create_with_success(obj: str) -> None:
+        print(f"Création {obj} terminée !\n")
 
     @staticmethod
     def remember_me() -> bool:
@@ -138,6 +151,55 @@ class View:
         question = f'Nom du collaborateur {complete}:'
         return View.no_blank_answer(question)
 
+    @classmethod
+    def asks_contract_name(cls, complete: str = "") -> str:
+        cls.quit_print(f"Quel est le nom du contrat {complete} ?")
+        return input("").strip()
+
+    @staticmethod
+    def asks_contract_new_name(contract_name: str) -> str:
+        print(f"Quel nouveau nom souhaitez-vous donner au contrat {contract_name}?")
+        return input("").strip()
+
+    @staticmethod
+    def error_price() -> float:
+        return -1.00
+
+    @classmethod
+    def check_price_validity(cls, price: str) -> float:
+        try:
+            split_price = price.split(",")
+            price = '.'.join(split_price)
+            float_price: float = float(price)
+            assert float_price >= 0.00
+            return float_price
+        except:
+            print("Erreur dans le montant.")
+            return cls.error_price()
+
+    @classmethod
+    def update_contract_remain(cls, remain: float) -> float:
+        if remain <= 0.00:
+            print("Le contrat a déjà été payé en totalité.")
+            return 0.00
+
+        while True:
+            print(f"D'après le contrat, {remain}€ n'ont pas encore été payées.\nCombien reste-t-il désormais à payer ?")
+            new_price: str = input("").strip()
+            new_float_price = cls.check_price_validity(new_price)
+            if remain >= new_float_price > cls.error_price():
+                return new_float_price
+
+    @classmethod
+    def signed_contract_prompt(cls):
+        print("Confirmez-vous que le contrat est signé ?")
+        return cls.yes_or_no_choice()
+
+    @classmethod
+    def asks_customer_mail(cls) -> str:
+        cls.quit_print("Veuillez renseigner l'adresse email du client")
+        return input("").strip()
+
     @staticmethod
     def missing_collaborator(username: str) -> None:
         print(f"Le collaborateur {username} n'est pas présent dans la base de données")
@@ -192,3 +254,56 @@ class View:
     @staticmethod
     def unknown_sales_collaborator(collab_name: str) -> None:
         print(f"Le collaborateur {collab_name} n'existe pas ou n'appartient pas au département commercial.")
+
+    @classmethod
+    def asks_event_name(cls) -> str:
+        cls.quit_print("Comment se nomme l'événement ?")
+        return input("")
+
+    @classmethod
+    def contract_modification_prompt(cls, role: str, is_already_signed: bool):
+        choices: list = ["Modifier le nom du contrat", "Mettre à jour le montant payé", ]
+
+        if not is_already_signed:
+            choices.append("Valider la signature du contrat")
+        if role == MANAGEMENT:
+            choices.append("Modifier le commercial")
+
+        return cls.choice_loop(cls.what_to_do(), choices)
+
+    @staticmethod
+    def contract_display(contract: Contract):
+        print(f"\n   Nom :{contract.name}")
+        print(f"   Nom du client : {contract.customer.full_name}")
+        print(f"   Entreprise du client : {contract.customer.company_name}")
+        print(f"   Nom du commercial : {contract.collaborator.username}")
+        print(f"   Montant total : {contract.total_value}€")
+        print(f"   Reste à payer : {contract.remains_to_be_paid}€")
+        is_signed: str = "Oui" if contract.signed else "Non"
+        print(f"   Signé : {is_signed}\n")
+
+    @staticmethod
+    def event_display(event: Event) -> None:
+        print(f"\n   Nom :{event.name}")
+        print(f"   Nom du client : {event.customer.full_name}")
+        print(f"   Contrat : {event.contract.name}")
+        print(f"   Début : {event.starting_time}")
+        print(f"   Fin : {event.ending_time}")
+        print(f"   Adresse : {event.address}")
+        print(f"   Nombre de participants : {event.attendant_number}")
+        print(f"   Technicient : {event.support}")
+        print(f"   Commentaires : {event.comment}\n")
+
+    @classmethod
+    def asks_event_date(cls, is_starting=True) -> tuple[str, str]:
+        context: str = "débutera" if is_starting else "terminera"
+
+        cls.quit_print(f"Quel jour {context} l'évenément ? -- au format JJ/MM/YYYY")
+        date_info: str = input("").strip()
+
+        cls.quit_print("À quelle heure ? -- au format 18h30  ")
+        hour_info: str = input("").strip()
+
+        return date_info, hour_info
+
+
