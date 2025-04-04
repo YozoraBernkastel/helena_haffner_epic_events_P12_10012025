@@ -119,3 +119,8 @@ class SalesView(View):
         print(f"\n   Nom du contrat : {contract.name}")
         print(f"   Mail du client : {contract.customer.mail}\n")
 
+    @classmethod
+    def display_customers_detail(cls, my_customers_list: list) -> None:
+        [print(f"- Client : {customer.full_name} - mail : {customer.mail} - entreprise : {customer.company_name}")
+         for customer in my_customers_list]
+        print()

@@ -58,3 +58,9 @@ class ManagementView(View):
             new_float_price = cls.check_price_validity(new_price)
             if new_float_price > cls.error_price():
                 return new_float_price
+
+    @classmethod
+    def event_menu_display(cls) -> str:
+        choices_list: list = ["Afficher tous les événements", "Afficher un événement en particulier",
+                              "Modifier le collaborateur travaillant sur un événement"]
+        return cls.choice_loop(cls.what_to_do(), choices_list)

@@ -1,7 +1,7 @@
 from view.management_view import ManagementView as View
 from control.generic_controller import GenericController
-from models.db_models import Collaborator, Contract
-from settings.settings import SALES, MANAGEMENT
+from models.db_models import Collaborator, Contract, Event
+from settings.settings import SALES, MANAGEMENT, SUPPORT
 
 
 class ManagementController(GenericController):
@@ -175,6 +175,29 @@ class ManagementController(GenericController):
         else:
             return
 
+    def change_event_collab(self):
+        event: Event | str = self.find_event()
+        if self.is_quitting(event):
+            return
+
+        collab: Collaborator | str = self.find_collab(SUPPORT)
+        if self.is_quitting(collab):
+            return
+
+        event.support = collab
+        event.save()
+        View.modification_done()
+
+    def event_menu(self):
+        choice = View.event_menu_display()
+
+        if choice == "1":
+            View.all_events_display()
+        if choice == "2":
+            self.event_display()
+        if choice == "3":
+            self.change_event_collab()
+
     def home_menu(self) -> None:
         while True:
             choice = View.menu()
@@ -184,7 +207,7 @@ class ManagementController(GenericController):
             elif choice == "2":
                 self.contracts_menu()
             elif choice == "3":
-                self.events_menu()
+                self.event_menu()
             elif choice == "4":
                 self.account_menu(self.user)
             else:

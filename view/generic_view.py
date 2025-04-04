@@ -28,6 +28,10 @@ class View:
         print("Ce client est n'existe pas.")
 
     @staticmethod
+    def unknown_event() -> None:
+        print("Cet événement n'existe pas.")
+
+    @staticmethod
     def unknown_contract(contract_name: str) -> None:
         print(f"Aucun contrat {contract_name} trouvé.")
 
@@ -186,7 +190,7 @@ class View:
         while True:
             print(f"D'après le contrat, {remain}€ n'ont pas encore été payées.\nCombien reste-t-il désormais à payer ?")
             new_price: str = input("").strip()
-            new_float_price = cls.check_price_validity(new_price)
+            new_float_price: float = cls.check_price_validity(new_price)
             if remain >= new_float_price > cls.error_price():
                 return new_float_price
 
@@ -255,6 +259,10 @@ class View:
     def unknown_sales_collaborator(collab_name: str) -> None:
         print(f"Le collaborateur {collab_name} n'existe pas ou n'appartient pas au département commercial.")
 
+    @staticmethod
+    def unknown_support_collaborator(collab_name: str) -> None:
+        print(f"Le collaborateur {collab_name} n'existe pas ou n'appartient pas au département support.")
+
     @classmethod
     def asks_event_name(cls) -> str:
         cls.quit_print("Comment se nomme l'événement ?")
@@ -285,14 +293,19 @@ class View:
     @staticmethod
     def event_display(event: Event) -> None:
         print(f"\n   Nom :{event.name}")
-        print(f"   Nom du client : {event.customer.full_name}")
+        print(f"   Nom du client : {event.contract.customer.full_name}")
         print(f"   Contrat : {event.contract.name}")
         print(f"   Début : {event.starting_time}")
         print(f"   Fin : {event.ending_time}")
         print(f"   Adresse : {event.address}")
         print(f"   Nombre de participants : {event.attendant_number}")
-        print(f"   Technicient : {event.support}")
+        print(f"   Technicien : {event.support.username}")
         print(f"   Commentaires : {event.comment}\n")
+
+    @classmethod
+    def all_events_display(cls) -> None:
+        event_list = Event.select().execute()
+        [View.event_display(event) for event in event_list]
 
     @classmethod
     def asks_event_date(cls, is_starting=True) -> tuple[str, str]:

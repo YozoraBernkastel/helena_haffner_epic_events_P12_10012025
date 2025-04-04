@@ -177,6 +177,8 @@ class GenericController:
             if isinstance(collab, Collaborator):
                 return collab
 
+            View.unknown_support_collaborator(collab_name)
+
     @classmethod
     def find_customer(cls, collaborator: Collaborator) -> Customer | str:
         while True:
@@ -189,3 +191,20 @@ class GenericController:
                 return customer
 
             View.unknown_customer()
+
+    @classmethod
+    def find_event(cls) -> Event | str:
+        while True:
+            event_name = View.asks_event_name()
+            if cls.is_quitting(event_name):
+                return event_name
+
+            event = Event.get_or_none(name=event_name)
+            if event is not None:
+                return event
+
+            View.unknown_event()
+
+    def event_display(self):
+        event = self.find_event()
+        View.event_display(event)

@@ -1,5 +1,6 @@
 from datetime import datetime
 from xmlrpc.client import DateTime
+from peewee import ModelSelect
 
 from settings.settings import SUPPORT
 from view.sales_view import SalesView as View
@@ -13,9 +14,7 @@ class SalesController(GenericController):
 
     def my_customers_list(self) -> None:
         my_customers_list = Customer.select().where(Customer.collaborator == self.user).execute()
-        [print(f"Client : {customer.full_name} - mail : {customer.mail} - entreprise : {customer.company_name}")
-         for customer in my_customers_list]
-        print()
+        View.display_customers_detail(my_customers_list)
 
     def customer_creation(self):
         is_mail_already_use: bool = True
@@ -142,7 +141,7 @@ class SalesController(GenericController):
         else:
             return
 
-    def my_contract_detail(self, my_contract_list: list) -> None:
+    def my_contract_detail(self, my_contract_list: ModelSelect) -> None:
         while True:
             contract_name = View.asks_contract_name()
             if self.is_quitting(contract_name):
@@ -163,7 +162,7 @@ class SalesController(GenericController):
 
     def contracts_menu(self) -> None:
         choice = View.sales_collab_contract_menu()
-        my_contracts = Contract.select().where(Contract.collaborator == self.user).execute()
+        my_contracts: ModelSelect = Contract.select().where(Contract.collaborator == self.user).execute()
 
         if choice == "1":
             [View.contract_display(contract) for contract in my_contracts]
