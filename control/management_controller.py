@@ -107,11 +107,22 @@ class ManagementController(GenericController):
             collaborator.delete_instance()
             View.deletion_complete()
 
-    @staticmethod
-    def objects_list():
-        # todo menu choix de role puis afficher la liste des employés possédant ce rôle j'imagine
-        # todo peut aussi accéder aux events, clients, etc en liste seule
-        pass
+    def choose_role_menu(self):
+        role = View.which_role()
+        if self.is_quitting(role):
+            return
+
+        collab_list = Collaborator.select().where(Collaborator.role == role).execute()
+        [View.collab_display(collab) for collab in collab_list]
+
+    def collab_list(self):
+        choice = View.collab_list_menu()
+        if choice == "1":
+            self.all_collab_list()
+        elif choice == "2":
+            self.choose_role_menu()
+        else:
+            return
 
     def collab_menu(self) -> None:
         choice = View.collab_menu()
@@ -123,7 +134,7 @@ class ManagementController(GenericController):
         elif choice == "3":
             self.collab_deletion()
         elif choice == "4":
-            self.objects_list()
+            self.collab_list()
         else:
             return
 
@@ -192,7 +203,7 @@ class ManagementController(GenericController):
         choice = View.event_menu_display()
 
         if choice == "1":
-            View.all_events_display()
+            self.all_events_list()
         if choice == "2":
             self.event_display()
         if choice == "3":
@@ -209,6 +220,8 @@ class ManagementController(GenericController):
             elif choice == "3":
                 self.event_menu()
             elif choice == "4":
+                self.all_customers_list()
+            elif choice == "5":
                 self.account_menu(self.user)
             else:
                 return

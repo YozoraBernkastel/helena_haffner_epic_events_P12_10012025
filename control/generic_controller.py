@@ -109,9 +109,24 @@ class GenericController:
             View.unknown_contract(contract_name)
 
     @staticmethod
+    def all_collab_list():
+        all_collaborators = Collaborator.select()
+        [View.collab_display(collab) for collab in all_collaborators]
+
+    @staticmethod
+    def all_customers_list():
+        all_customers = Customer.select()
+        View.display_customers_detail(all_customers)
+
+    @staticmethod
     def all_contracts_list():
         all_contracts = Contract.select()
         [View.contract_display(contract) for contract in all_contracts]
+
+    @staticmethod
+    def all_events_list():
+        all_events = Event.select()
+        [View.event_display(event) for event in all_events]
 
     @classmethod
     def change_contract_collaborator(cls, contract_name: str) -> Collaborator | str:

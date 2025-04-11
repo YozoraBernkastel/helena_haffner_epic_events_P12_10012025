@@ -1,6 +1,6 @@
 from getpass import getpass
 from settings.settings import MANAGEMENT, SUPPORT, SALES
-from models.db_models import Event, Contract
+from models.db_models import Event, Contract, Collaborator, Customer
 
 
 class View:
@@ -292,6 +292,11 @@ class View:
         return cls.choice_loop(cls.what_to_do(), choices)
 
     @staticmethod
+    def collab_display(collaborator: Collaborator):
+        print(f"\n   Nom d'utilisateur : {collaborator.username}")
+        print(f"   rôle : {collaborator.role}\n")
+
+    @staticmethod
     def contract_display(contract: Contract):
         print(f"\n   Nom :{contract.name}")
         print(f"   Nom du client : {contract.customer.full_name}")
@@ -301,6 +306,21 @@ class View:
         print(f"   Reste à payer : {contract.remains_to_be_paid}€")
         is_signed: str = "Oui" if contract.signed else "Non"
         print(f"   Signé : {is_signed}\n")
+
+    @staticmethod
+    def display_customer_detail(customer: Customer):
+        print(f"\n   Nom : {customer.full_name}")
+        print(f"   Mail : {customer.mail}")
+        print(f"   Entreprise : {customer.company_name}")
+        print(f"   Créé le : {customer.creation_date}")
+        print(f"   Nom de son contact : {customer.collaborator.username}")
+        print(f"   Informations complémentaires : {customer.information}\n")
+
+    @classmethod
+    def display_customers_detail(cls, my_customers_list: list) -> None:
+        [print(f"- Client : {customer.full_name} - mail : {customer.mail} - entreprise : {customer.company_name}")
+         for customer in my_customers_list]
+        print()
 
     @staticmethod
     def event_display(event: Event) -> None:
@@ -313,11 +333,6 @@ class View:
         print(f"   Nombre de participants : {event.attendant_number}")
         print(f"   Technicien : {event.support.username}")
         print(f"   Commentaires : {event.information}\n")
-
-    @classmethod
-    def all_events_display(cls) -> None:
-        event_list = Event.select().execute()
-        [View.event_display(event) for event in event_list]
 
     @classmethod
     def asks_event_date(cls, is_starting=True) -> tuple[str, str]:

@@ -22,11 +22,18 @@ class SupportView(View):
         return input("")
 
     @classmethod
-    def menu(cls) -> str:
+    def event_menu(cls) -> str:
         choices_list: list = ["Afficher mes événements", "Afficher un de mes événement",
-                              "Modifier un de mes événement", "Mon compte"]
+                              "Modifier un de mes événement", "Voir tous les événements", "Mon compte"]
 
         return cls.choice_loop(cls.what_to_do(), choices_list)
+
+    @classmethod
+    def menu(cls) -> str:
+        choices_list: list = ["Voir les Événements", "Voir tous les Clients", "Voir les contrats"]
+
+        return cls.choice_loop(cls.what_to_do(), choices_list)
+
 
 
 

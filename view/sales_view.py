@@ -8,18 +8,26 @@ class SalesView(View):
         pass
 
     @classmethod
-    def events_menu(cls) -> None:
-        pass
+    def events_menu(cls) -> str:
+        choices_list: list = ["Créer un événement", "Voir tous les événements", "Voir un événement"]
+
+        return cls.choice_loop(cls.what_to_do(), choices_list)
 
     @classmethod
-    def customer_menu(cls):
-        choices_list: list = ["Créer un nouveau client", "Modifier un de mes client", "Voir ma liste de clients",
+    def customer_menu(cls) -> str:
+        choices_list: list = ["Créer un nouveau client", "Modifier un de mes client", "Voir la liste des clients",
                               "Consulter les informations d'un client", "Supprimer un Client"]
         return cls.choice_loop(cls.what_to_do(), choices_list)
 
     @classmethod
+    def customer_choice(cls) -> str:
+        choices_list: list = ["Voir tous les clients", "Voir mes clients"]
+
+        return cls.choice_loop(cls.what_to_do(), choices_list)
+
+    @classmethod
     def menu(cls) -> str:
-        choices_list: list = ["Mes Clients", "Mes Contrats", "Créer un Événement", "Mon Compte"]
+        choices_list: list = ["Clients", "Contrats", "Événement", "Mon Compte"]
         return cls.choice_loop(cls.category_question(), choices_list)
 
     @classmethod
@@ -71,15 +79,6 @@ class SalesView(View):
         question = f"Quel est le nouveau nom del 'entrerprise de {customer_name} ?"
         return cls.no_blank_answer(question)
 
-    @staticmethod
-    def display_customer_detail(customer: Customer):
-        print(f"\n   Nom : {customer.full_name}")
-        print(f"   Mail : {customer.mail}")
-        print(f"   Entreprise : {customer.company_name}")
-        print(f"   Créé le : {customer.creation_date}")
-        print(f"   Nom de son contact : {customer.collaborator.username}")
-        print(f"   Informations complémentaires : {customer.information}\n")
-
     @classmethod
     def asks_event_address(cls):
         cls.quit_print("À quelle adresse aura lieu l'événement ?")
@@ -88,16 +87,10 @@ class SalesView(View):
     @classmethod
     def sales_collab_contract_menu(cls):
         choices = ["Voir mes contrats", "Voir mes contrats n'ayant pas encore d'événement", "Voir un contrat",
-                   "Modifier un contrat"]
+                   "Modifier un contrat", "Voir tous les contrats"]
         return cls.choice_loop(cls.what_to_do(), choices).strip()
 
     @staticmethod
     def no_event_contract(contract: Contract):
         print(f"\n   Nom du contrat : {contract.name}")
         print(f"   Mail du client : {contract.customer.mail}\n")
-
-    @classmethod
-    def display_customers_detail(cls, my_customers_list: list) -> None:
-        [print(f"- Client : {customer.full_name} - mail : {customer.mail} - entreprise : {customer.company_name}")
-         for customer in my_customers_list]
-        print()
