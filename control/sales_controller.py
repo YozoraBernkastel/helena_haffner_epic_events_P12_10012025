@@ -1,5 +1,4 @@
 from datetime import datetime
-from xmlrpc.client import DateTime
 from peewee import ModelSelect
 
 from settings.settings import SUPPORT
@@ -79,9 +78,9 @@ class SalesController(GenericController):
 
         self.customer_modification_detail(customer)
 
-    def search_event(self, contract: Contract):
-        print(contract)
-        return Event.select().where(Contract == contract).execute()
+    @staticmethod
+    def search_event(contract: Contract):
+        return Event.select().where(Event.contract == contract).execute()
 
     def customer_detail(self) -> None:
         customer: Customer = self.find_customer(collaborator=self.user)
@@ -89,11 +88,8 @@ class SalesController(GenericController):
             return
 
         View.display_customer_detail(customer)
-        # customer_events: list = Event.select().where(Event.contract.customer == customer).execute()
-        customer_contracts: list = Contract.select().where(Customer == customer).execute()
-        customer_events: list[list[Event]] = [self.search_event(contract) for contract in customer_contracts]
-        for events in customer_events:
-            [View.event_display(event) for event in events]
+        customer_events: list = Event.select().join(Contract, on=(Event.contract == Contract.id)).where(Contract.customer == customer).execute()
+        [View.event_display(event) for event in customer_events]
 
     def delete_customer(self) -> None:
         customer = self.find_customer(collaborator=self.user)
