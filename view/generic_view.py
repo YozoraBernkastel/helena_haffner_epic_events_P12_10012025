@@ -269,6 +269,18 @@ class View:
         return input("")
 
     @classmethod
+    def asks_number_of_participants(cls) -> int | str:
+        choice: str = ""
+
+        while not choice.isdigit():
+            cls.quit_print("Combien de personnes participeront-elles à l'événement ?")
+            choice = input("").strip()
+            if choice.strip().lower() == "q":
+                return choice
+
+        return int(choice)
+
+    @classmethod
     def contract_modification_prompt(cls, role: str, is_already_signed: bool):
         choices: list = ["Modifier le nom du contrat", "Mettre à jour le montant payé", ]
 
@@ -300,7 +312,7 @@ class View:
         print(f"   Adresse : {event.address}")
         print(f"   Nombre de participants : {event.attendant_number}")
         print(f"   Technicien : {event.support.username}")
-        print(f"   Commentaires : {event.comment}\n")
+        print(f"   Commentaires : {event.information}\n")
 
     @classmethod
     def all_events_display(cls) -> None:
@@ -318,5 +330,16 @@ class View:
         hour_info: str = input("").strip()
 
         return date_info, hour_info
+
+    @classmethod
+    def info_menu(cls) -> str:
+        choices_list = ["Ajouter des informations", "Modifier les informations", "Supprimer les informations"]
+
+        return cls.choice_loop(cls.what_to_do(), choices_list)
+
+    @staticmethod
+    def add_info_prompt() -> str:
+        print("Ecrivez les informations à ajouter :")
+        return input("")
 
 

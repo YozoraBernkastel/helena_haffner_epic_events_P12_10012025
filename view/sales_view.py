@@ -71,17 +71,6 @@ class SalesView(View):
         question = f"Quel est le nouveau nom del 'entrerprise de {customer_name} ?"
         return cls.no_blank_answer(question)
 
-    @classmethod
-    def customer_info_menu(cls) -> str:
-        choices_list = ["Ajouter des informations", "Modifier les informations", "Supprimer les informations"]
-
-        return cls.choice_loop(cls.what_to_do(), choices_list)
-
-    @staticmethod
-    def add_customer_info_prompt(customer) -> str:
-        print("Ecrivez les informations à ajouter :")
-        return input("")
-
     @staticmethod
     def display_customer_detail(customer: Customer):
         print(f"\n   Nom : {customer.full_name}")
@@ -95,18 +84,6 @@ class SalesView(View):
     def asks_event_address(cls):
         cls.quit_print("À quelle adresse aura lieu l'événement ?")
         return input("")
-
-    @classmethod
-    def asks_number_of_participants(cls) -> int | str:
-        choice: str = ""
-
-        while not choice.isdigit():
-            cls.quit_print("Combien de personnes participeront-elles à l'événement ?")
-            choice = input("").strip()
-            if choice.strip().lower() == "q":
-                return choice
-
-        return int(choice)
 
     @classmethod
     def sales_collab_contract_menu(cls):

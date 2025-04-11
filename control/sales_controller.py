@@ -49,52 +49,21 @@ class SalesController(GenericController):
 
         View.create_with_success(f"du client {customer_name}")
 
-    def modify_customer(self, customer: Customer, attribute: str, new_data: str) -> None:
-        if self.is_quitting(new_data):
-            View.modification_canceled()
-            return
-
-        setattr(customer, attribute, new_data)
-        customer.save()
-        View.modification_done()
-
-    @staticmethod
-    def add_customer_info(customer: Customer, old_info: str = "") -> None:
-        new_info = View.add_customer_info_prompt(customer)
-        customer.information = f"{old_info}{new_info}"
-        customer.save()
-        View.modification_done()
-
-    def information_modification(self, customer: Customer) -> None:
-        choice = View.customer_info_menu()
-
-        if choice == "1":
-            old_info = f"{customer.information}\n" if len(customer.information) > 0 else ""
-            self.add_customer_info(customer, old_info)
-        elif choice == "2":
-            self.add_customer_info(customer)
-        elif choice == "3":
-            customer.information = ""
-            customer.save()
-            View.modification_done()
-        else:
-            return
-
     def customer_modification_detail(self, customer: Customer):
         choice = View.customer_modification_menu(customer.full_name)
 
         if choice == "1":
             new_name = View.rename_customer_prompt(customer.full_name)
-            self.modify_customer(customer, "full_name", new_name)
+            self.modify_obj(customer, "full_name", new_name)
         elif choice == "2":
             new_mail = View.new_mail_customer_prompt(customer.full_name)
-            self.modify_customer(customer, "mail", new_mail)
+            self.modify_obj(customer, "mail", new_mail)
         elif choice == "3":
             new_phone = View.new_phone_customer_prompt(customer.full_name)
-            self.modify_customer(customer, "phone", new_phone)
+            self.modify_obj(customer, "phone", new_phone)
         elif choice == "4":
             new_company_name = View.new_company_prompt(customer.full_name)
-            self.modify_customer(customer, "company_name", new_company_name)
+            self.modify_obj(customer, "company_name", new_company_name)
         elif choice == "5":
             self.customer_collaborator_modification(customer)
         elif choice == "6":
@@ -110,14 +79,21 @@ class SalesController(GenericController):
 
         self.customer_modification_detail(customer)
 
+    def search_event(self, contract: Contract):
+        print(contract)
+        return Event.select().where(Contract == contract).execute()
+
     def customer_detail(self) -> None:
-        customer = self.find_customer(collaborator=self.user)
+        customer: Customer = self.find_customer(collaborator=self.user)
         if self.is_quitting(customer):
             return
 
         View.display_customer_detail(customer)
-        customer_events: list = Event.select().where(Event.customer == customer).execute()
-        [View.event_display(event) for event in customer_events]
+        # customer_events: list = Event.select().where(Event.contract.customer == customer).execute()
+        customer_contracts: list = Contract.select().where(Customer == customer).execute()
+        customer_events: list[list[Event]] = [self.search_event(contract) for contract in customer_contracts]
+        for events in customer_events:
+            [View.event_display(event) for event in events]
 
     def delete_customer(self) -> None:
         customer = self.find_customer(collaborator=self.user)
@@ -176,18 +152,6 @@ class SalesController(GenericController):
         else:
             return
 
-    def create_specific_datetime(self, is_starting=True) -> datetime | str:
-        while True:
-            date, hour = View.asks_event_date(is_starting)
-
-            if self.is_quitting(date) or self.is_quitting(hour):
-                return "q"
-
-            formated_date = self.convert_str_in_datetime(date, hour)
-
-            if isinstance(formated_date, datetime):
-                return formated_date
-
     def event_name(self) -> str:
         while True:
             event_name = View.asks_event_name()
@@ -218,8 +182,6 @@ class SalesController(GenericController):
         if self.is_quitting(ending_date):
             return
 
-        print(starting_date)
-
         address: str = View.asks_event_address()
         if self.is_quitting(address):
             return
@@ -228,11 +190,11 @@ class SalesController(GenericController):
         if self.is_quitting(attendant_participant):
             return
 
-        comment = View.asks_info()
+        information = View.asks_info()
 
         Event.create(name=event_name, contract=contract, starting_time=starting_date,
                      ending_time=ending_date, support=support_collab, address=address,
-                     attendant_number=attendant_participant, comment=comment)
+                     attendant_number=attendant_participant, information=information)
 
         View.create_with_success(f"de l'événement {event_name}")
 
