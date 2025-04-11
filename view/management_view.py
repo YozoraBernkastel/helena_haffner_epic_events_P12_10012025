@@ -6,13 +6,13 @@ class ManagementView(View):
     @classmethod
     def collab_menu(cls) -> str:
         choices_list: list = ["Créer un collaborateur", "Modifier un collaborateur",
-                              "Supprimer un collaborateur", "Voir la liste des collaborateurs"]
+                              "Supprimer un collaborateur", "Liste des collaborateurs"]
 
         return cls.choice_loop(cls.what_to_do(), choices_list)
 
     @classmethod
     def menu(cls) -> str:
-        choices_list: list = ["Collaborateurs", "Contrats", "Événements", "Mon Compte"]
+        choices_list: list = ["Collaborateurs", "Contrats", "Événements", "Clients", "Mon Compte"]
 
         return cls.choice_loop(cls.category_question(), choices_list)
 
@@ -21,10 +21,23 @@ class ManagementView(View):
         return cls.asks_password_template("Définissez son mot de passe:")
 
     @classmethod
+    def collab_list_menu(cls):
+        choices_list: list = ["Consulter la liste de tous les collaborateurs", "Consulter la liste d'un département"]
+
+        return cls.choice_loop(cls.what_to_do(), choices_list)
+
+    @classmethod
     def asks_role(cls, modification: bool = False) -> str:
         new = "nouveau " if modification else ""
         question: str = f"Définissez son {new}rôle:"
-        choice: str = ManagementView.choice_loop(question, ROLES_LIST).strip()
+        choice: str = cls.choice_loop(question, ROLES_LIST).strip()
+
+        return cls.roles_enum(choice)
+
+    @classmethod
+    def which_role(cls) -> str:
+        question: str = "De quel département souhaitez-vous consulter la liste des employés ?"
+        choice: str = cls.choice_loop(question, ROLES_LIST).strip()
 
         return cls.roles_enum(choice)
 

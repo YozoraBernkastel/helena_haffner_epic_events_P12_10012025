@@ -97,6 +97,16 @@ class SalesController(GenericController):
             return
         customer.delete_instance()
 
+    def customers_list(self):
+        choice = View.customer_choice()
+
+        if choice == "1":
+            self.all_customers_list()
+        elif choice == "2":
+            self.my_customers_list()
+        else:
+            return
+
     def customers_menu(self) -> None:
         choice = View.customer_menu()
 
@@ -105,7 +115,7 @@ class SalesController(GenericController):
         elif choice == "2":
             self.customer_detail_modification()
         elif choice == "3":
-            self.my_customers_list()
+            self.customers_list()
         elif choice == "4":
             self.customer_detail()
         elif choice == "5":
@@ -134,19 +144,22 @@ class SalesController(GenericController):
 
     def contracts_menu(self) -> None:
         choice = View.sales_collab_contract_menu()
-        my_contracts: ModelSelect = Contract.select().where(Contract.collaborator == self.user).execute()
 
-        if choice == "1":
-            [View.contract_display(contract) for contract in my_contracts]
-        elif choice == "2":
-            without_event = [contract for contract in my_contracts if Event.get_or_none(contract=contract) is None]
-            [View.no_event_contract(contract) for contract in without_event]
-        elif choice == "3":
-            self.my_contract_detail(my_contracts)
-        elif choice == "4":
-            self.contract_detail_modification(self.user)
+        if choice == "5":
+            self.all_contracts_list()
         else:
-            return
+            my_contracts: ModelSelect = Contract.select().where(Contract.collaborator == self.user).execute()
+            if choice == "1":
+                [View.contract_display(contract) for contract in my_contracts]
+            elif choice == "2":
+                without_event = [contract for contract in my_contracts if Event.get_or_none(contract=contract) is None]
+                [View.no_event_contract(contract) for contract in without_event]
+            elif choice == "3":
+                self.my_contract_detail(my_contracts)
+            elif choice == "4":
+                self.contract_detail_modification(self.user)
+            else:
+                return
 
     def event_name(self) -> str:
         while True:
@@ -194,6 +207,23 @@ class SalesController(GenericController):
 
         View.create_with_success(f"de l'événement {event_name}")
 
+    def display_event(self) -> None:
+        event = self.find_event()
+        if not self.is_quitting(event):
+            View.event_display(event)
+
+    def event_menu(self):
+        choice = View.events_menu()
+
+        if choice == "1":
+            self.events_creation()
+        elif choice == "2":
+            self.all_events_list()
+        elif choice == "3":
+            self.display_event()
+        else:
+            return
+
     def home_menu(self) -> None:
         while True:
             choice = View.menu()
@@ -203,7 +233,7 @@ class SalesController(GenericController):
             elif choice == "2":
                 self.contracts_menu()
             elif choice == "3":
-                self.events_creation()
+                self.event_menu()
             elif choice == "4":
                 self.account_menu(self.user)
             else:

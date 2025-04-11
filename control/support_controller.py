@@ -42,17 +42,33 @@ class SupportController(GenericController):
 
         self.event_modification(event)
 
+    def event_menu(self) -> None:
+        choice = View.event_menu()
+
+        if choice == "1":
+            self.all_my_events()
+        elif choice == "2":
+            self.event_display()
+        elif choice == "3":
+            self.modify_event()
+        elif choice == "4":
+            self.all_events_list()
+        elif choice == "5":
+            self.account_menu(self.user)
+        else:
+            return
+
     def home_menu(self) -> None:
         while True:
             choice = View.menu()
 
             if choice == "1":
-                self.all_my_events()
+                self.event_menu()
             elif choice == "2":
-                self.event_display()
+                self.all_customers_list()
             elif choice == "3":
-                self.modify_event()
-            elif choice == "4":
-                self.account_menu(self.user)
+                self.all_contracts_list()
             else:
                 return
+
+
