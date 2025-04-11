@@ -177,6 +177,8 @@ class GenericController:
             if isinstance(collab, Collaborator):
                 return collab
 
+            View.unknown_support_collaborator(collab_name)
+
     @classmethod
     def find_customer(cls, collaborator: Collaborator) -> Customer | str:
         while True:
@@ -185,7 +187,67 @@ class GenericController:
                 return customer_mail
 
             customer = Customer.get_or_none(mail=customer_mail, collaborator=collaborator)
-            if customer is not None:
+            if isinstance(customer, Customer):
                 return customer
 
             View.unknown_customer()
+
+    @classmethod
+    def find_event(cls) -> Event | str:
+        while True:
+            event_name = View.asks_event_name()
+            if cls.is_quitting(event_name):
+                return event_name
+
+            event = Event.get_or_none(name=event_name)
+            if event is not None:
+                return event
+
+            View.unknown_event()
+
+    def event_display(self):
+        event = self.find_event()
+
+        if isinstance(event, Event):
+            View.event_display(event)
+
+    @staticmethod
+    def add_customer_info(old_info: str = "") -> str:
+        new_info = View.add_info_prompt()
+        return f"{old_info} {new_info} "
+
+    def information_modification(self, obj: Customer | Event) -> None:
+        choice = View.info_menu()
+
+        if choice == "1":
+            obj.information = self.add_customer_info(obj.information)
+        elif choice == "2":
+            obj.information = self.add_customer_info()
+        elif choice == "3":
+            obj.information = ""
+        else:
+            return
+
+        obj.save()
+        View.modification_done()
+
+    def modify_obj(self, obj, attribute: str, new_data: str) -> None:
+        if self.is_quitting(new_data):
+            View.modification_canceled()
+            return
+
+        setattr(obj, attribute, new_data)
+        obj.save()
+        View.modification_done()
+
+    def create_specific_datetime(self, is_starting=True) -> datetime | str:
+        while True:
+            date, hour = View.asks_event_date(is_starting)
+
+            if self.is_quitting(date) or self.is_quitting(hour):
+                return "q"
+
+            formated_date = self.convert_str_in_datetime(date, hour)
+
+            if isinstance(formated_date, datetime):
+                return formated_date

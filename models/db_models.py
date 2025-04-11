@@ -92,10 +92,7 @@ class Event(Model):
     support = ForeignKeyField(Collaborator, backref="support_events", null=True)
     address = CharField()
     attendant_number = IntegerField()
-    comment = CharField()
+    information = CharField()
 
     class Meta:
         database = db
-
-
-# charfield, textifield, imagefield, filefield et emailfield ne peuvent pas être null !!
