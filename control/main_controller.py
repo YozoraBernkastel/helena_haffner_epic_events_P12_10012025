@@ -36,7 +36,8 @@ class Controller(GenericController):
             Customer.create_table()
             Contract.create_table()
             Event.create_table()
-            self.first_user_creation()
+            if Collaborator.select().count() == 0:
+                self.first_user_creation()
 
     def log_in(self) -> None:
         while self.user is None:
