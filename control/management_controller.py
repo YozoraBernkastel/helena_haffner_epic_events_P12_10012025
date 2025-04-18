@@ -9,22 +9,8 @@ class ManagementController(GenericController):
         self.user: Collaborator = user
 
     def collab_creation(self) -> None:
-        is_username_already_use: bool = True
-        username: str = ""
-
-        while is_username_already_use:
-            username = View.asks_username()
-
-            if self.is_quitting(username):
-                return
-
-            if self.is_available_username(username):
-                break
-            View.username_already_used(username)
-
-        password: str = View.asks_collab_password()
-
-        if self.is_quitting(password):
+        username, password = self.choose_username_and_password()
+        if self.is_quitting(username):
             return
 
         role = View.asks_role()

@@ -4,6 +4,11 @@ from models.db_models import Event, Contract, Collaborator, Customer
 
 
 class View:
+    @classmethod
+    def create_first_user_warning(cls):
+        print("Aucun utilisateur n'existe actuellement dans la base de données.")
+        print("Le premier utilisateur doit nécessairement appartenir au département de management.")
+
     @staticmethod
     def connection() -> tuple[str, str]:
         print("Pour vous connecter, veuillez renseigner votre nom d'utilisateur:")
@@ -54,7 +59,7 @@ class View:
         return False
 
     @staticmethod
-    def create_with_success(obj: str) -> None:
+    def create_with_success(obj: str = "") -> None:
         print(f"Création {obj} terminée !\n")
 
     @staticmethod
@@ -149,6 +154,10 @@ class View:
     @classmethod
     def asks_actual_password(cls) -> str:
         return cls.asks_password_template("Veuillez indiquer votre mot de passe")
+
+    @classmethod
+    def asks_collab_password(cls) -> str:
+        return cls.asks_password_template("Définissez son mot de passe:")
 
     @staticmethod
     def asks_username(complete: str = "") -> str:
@@ -313,6 +322,7 @@ class View:
         print(f"   Mail : {customer.mail}")
         print(f"   Entreprise : {customer.company_name}")
         print(f"   Créé le : {customer.creation_date}")
+        print(f"   Dernière mise à jour : {customer.last_update}")
         print(f"   Nom de son contact : {customer.collaborator.username}")
         print(f"   Informations complémentaires : {customer.information}\n")
 

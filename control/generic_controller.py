@@ -13,6 +13,25 @@ class GenericController:
     def is_available_username(username: str) -> bool:
         return Collaborator.get_or_none(username=username) is None
 
+    def choose_username_and_password(self) -> tuple[str, str]:
+        while True:
+            username = View.asks_username()
+
+            if self.is_quitting(username):
+                return username, username
+
+            if self.is_available_username(username):
+                break
+
+            View.username_already_used(username)
+
+        password: str = View.asks_collab_password()
+
+        if self.is_quitting(password):
+            return password, password
+
+        return username, password
+
     @staticmethod
     def is_available_mail(new_mail: str) -> bool:
         return Customer.get_or_none(mail=new_mail) is None
@@ -251,6 +270,8 @@ class GenericController:
             return
 
         setattr(obj, attribute, new_data)
+        if isinstance(obj, Customer):
+            obj.last_update = datetime.now()
         obj.save()
         View.modification_done()
 

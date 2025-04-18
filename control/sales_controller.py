@@ -67,7 +67,6 @@ class SalesController(GenericController):
             self.customer_collaborator_modification(customer)
         elif choice == "6":
             self.information_modification(customer)
-            pass
         else:
             return
 

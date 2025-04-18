@@ -2,7 +2,8 @@ import bcrypt
 from peewee import *
 from datetime import datetime
 
-db = SqliteDatabase("database")
+db_name: str = "database"
+db = SqliteDatabase(db_name)
 
 
 class Collaborator(Model):
@@ -72,6 +73,7 @@ class Customer(Model):
 
     def change_collab(self, new_collab: Collaborator):
         self.collaborator = new_collab
+        self.last_update = datetime.now()
         self.save()
 
         all_contracts = Contract.select().where(Contract.customer == self).execute()
@@ -87,7 +89,6 @@ class Contract(Model):
     remains_to_be_paid = DoubleField()
     signed = BooleanField(default=False)
     creation_date = DateTimeField(default=datetime.now())
-    last_update = DateTimeField(default=datetime.now())
 
     class Meta:
         database = db
