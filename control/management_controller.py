@@ -1,6 +1,6 @@
 from view.management_view import ManagementView as View
 from control.generic_controller import GenericController
-from models.db_models import Collaborator, Contract, Event
+from models.db_models import Collaborator, Contract, Event, Customer
 from settings.settings import SALES, MANAGEMENT, SUPPORT
 
 
@@ -91,8 +91,33 @@ class ManagementController(GenericController):
         else:
             return
 
+    def customer_reattribution(self, collaborator: Collaborator) -> bool:
+        all_customers = Customer.select().where(Customer.collaborator == collaborator).execute()
+
+        for customer in all_customers:
+            self.customer_collaborator_modification(customer)
+
+        return True
+
+    @staticmethod
+    def event_reattribution(collaborator) -> bool:
+        if not View.events_will_loose_support():
+            return False
+
+        all_events = Event.select().where(Event.support == collaborator).execute()
+        [event.new_support(None) for event in all_events]
+
+        return True
+
+    def database_reorganisation(self, collaborator: Collaborator) -> bool:
+        if collaborator.role == SALES:
+            return self.customer_reattribution(collaborator)
+        elif collaborator.role == SUPPORT:
+            return self.event_reattribution(collaborator)
+        else:
+            return True
+
     def collab_deletion(self):
-        # todo si le collaborateur a des clients par exemple, il faut peut-être demander à réattribuer les clients à quelqu'un d'autre avant la suppression, non ?
         username = View.asks_username("à supprimer")
         if self.is_quitting(username):
             return
@@ -101,6 +126,9 @@ class ManagementController(GenericController):
 
         if collaborator is None:
             View.missing_collaborator(username)
+            return
+        if not self.database_reorganisation(collaborator):
+            View.canceled_deletion(f"du collaborateur {collaborator.username}")
             return
 
         if View.asks_collab_delete_confirmation(collaborator.username):

@@ -56,6 +56,10 @@ class ManagementView(View):
     def deletion_complete():
         print("Suppression terminée.\n")
 
+    @staticmethod
+    def canceled_deletion(category: str = ""):
+        print(f"Suppression {category} annulée.\n")
+
     @classmethod
     def contract_menu(cls) -> str:
         choices = ["Créer un contrat", "Modifier un contrat",
@@ -77,3 +81,10 @@ class ManagementView(View):
         choices_list: list = ["Afficher tous les événements", "Afficher un événement en particulier",
                               "Modifier le collaborateur travaillant sur un événement"]
         return cls.choice_loop(cls.what_to_do(), choices_list)
+
+    @classmethod
+    def events_will_loose_support(cls) -> bool:
+        print("Tous les événements gérer par ce collaborateur vont se retrouver sans personne pour les gérer.")
+        print("Confirmer la suppression ?")
+
+        return cls.yes_or_no_choice()

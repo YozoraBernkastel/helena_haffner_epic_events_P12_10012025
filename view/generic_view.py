@@ -25,7 +25,7 @@ class View:
 
     @staticmethod
     def unknown_customer() -> None:
-        print("Ce client est n'existe pas.")
+        print("Ce client n'existe pas.")
 
     @staticmethod
     def unknown_event() -> None:
@@ -331,7 +331,8 @@ class View:
         print(f"   Fin : {event.ending_time}")
         print(f"   Adresse : {event.address}")
         print(f"   Nombre de participants : {event.attendant_number}")
-        print(f"   Technicien : {event.support.username}")
+        support_name: str = "Aucun" if event.support is None else event.support.username
+        print(f"   Technicien : {support_name}")
         print(f"   Commentaires : {event.information}\n")
 
     @classmethod
@@ -357,4 +358,6 @@ class View:
         print("Ecrivez les informations à ajouter :")
         return input("")
 
-
+    @staticmethod
+    def same_collaborator_prompt():
+        print("Vous avez choisit de réattribuer le contrat au même collaborateur.")
