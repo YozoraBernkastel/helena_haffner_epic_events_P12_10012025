@@ -64,7 +64,6 @@ class ManagementView(View):
 
     @classmethod
     def asks_contract_total_value(cls):
-        # todo possible utiliser la lib mock pour utiliser le décorateur side_effect, permettant d'entrer des inputs
         while True:
             print("Quel est le montant total du contrat ?")
             new_price = input("").strip()

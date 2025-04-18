@@ -1,4 +1,4 @@
-from view.management_view import ManagementView as View
+from view.role_views.management_view import ManagementView as View
 from control.generic_controller import GenericController
 from models.db_models import Collaborator, Contract, Event, Customer
 from settings.settings import SALES, MANAGEMENT, SUPPORT

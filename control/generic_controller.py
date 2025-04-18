@@ -1,6 +1,6 @@
 from view.generic_view import View
 from models.db_models import Collaborator, Customer, Event, Contract
-from settings.settings import MANAGEMENT, SALES, SUPPORT
+from settings.settings import MANAGEMENT, SALES
 from datetime import datetime
 
 

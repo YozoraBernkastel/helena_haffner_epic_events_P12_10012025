@@ -1,4 +1,4 @@
-from view.support_view import SupportView as View
+from view.role_views.support_view import SupportView as View
 from control.generic_controller import GenericController
 from models.db_models import Collaborator, Event
 

@@ -8,7 +8,7 @@ from view.generic_view import View
 from Helper.jwt_helper import JwtHelper
 from models.picture_encoding import PictureEncoding
 from models.picture_decoding import PictureDecoding
-from settings.settings import MANAGEMENT, SALES, SUPPORT
+from settings.settings import MANAGEMENT, SALES
 
 
 class Controller(GenericController):
@@ -37,7 +37,6 @@ class Controller(GenericController):
             Contract.create_table()
             Event.create_table()
             self.first_user_creation()
-
 
     def log_in(self) -> None:
         while self.user is None:

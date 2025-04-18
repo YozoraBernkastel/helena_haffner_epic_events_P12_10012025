@@ -1,11 +1,12 @@
 from getpass import getpass
+from view.unwanted_view import UnwantedView
+from view.display_obj_view import DisplayView
 from settings.settings import MANAGEMENT, SUPPORT, SALES
-from models.db_models import Event, Contract, Collaborator, Customer
 
 
-class View:
+class View(UnwantedView, DisplayView):
     @classmethod
-    def create_first_user_warning(cls):
+    def create_first_user_warning(cls) -> None:
         print("Aucun utilisateur n'existe actuellement dans la base de données.")
         print("Le premier utilisateur doit nécessairement appartenir au département de management.")
 
@@ -23,30 +24,6 @@ class View:
     @staticmethod
     def what_to_do() -> str:
         return "Que souhaitez-vous faire ?"
-
-    @staticmethod
-    def unknown_user_or_password() -> None:
-        print("Utilisateur ou mot de passe inconnu.")
-
-    @staticmethod
-    def unknown_customer() -> None:
-        print("Ce client n'existe pas.")
-
-    @staticmethod
-    def unknown_event() -> None:
-        print("Cet événement n'existe pas.")
-
-    @staticmethod
-    def unknown_contract(contract_name: str) -> None:
-        print(f"Aucun contrat {contract_name} trouvé.")
-
-    @staticmethod
-    def access_denied():
-        print("Vous n'avez pas l'autorisation d'accéder à ceci.")
-
-    @staticmethod
-    def bad_password() -> None:
-        print("Vous avez donné un mauvais mot de passe.")
 
     @classmethod
     def yes_or_no_choice(cls) -> bool:
@@ -71,19 +48,6 @@ class View:
     def is_that_you(username: str) -> bool:
         print(f"Êtes-vous bien {username} ?")
         return View.yes_or_no_choice()
-
-    @staticmethod
-    def already_used_prompt(category: str, data: str, is_feminine: bool = False) -> None:
-        feminine: str = "e" if is_feminine else ""
-        print(f'{category} {data} est déjà utlisé{feminine}, veuillez en choisir un{feminine} autre, svp.')
-
-    @classmethod
-    def username_already_used(cls, username: str) -> None:
-        cls.already_used_prompt("Le nom d'utilisateur", username)
-
-    @classmethod
-    def mail_already_used(cls, mail: str) -> None:
-        cls.already_used_prompt("L'adresse mail", mail, True)
 
     @staticmethod
     def hello_prompt(username: str) -> None:
@@ -111,12 +75,6 @@ class View:
         valid_choices_list = [str(i) for i in range(1, max_range + 1)]
 
         return valid_choices_list + quit_choices
-
-    @staticmethod
-    def unknown_option() -> None:
-        print(
-            "\nCette option n'existe malheureusement pas,"
-            " veuillez sélectionner une commande valide parmi la liste\n")
 
     @staticmethod
     def print_choices(choices_list: list) -> None:
@@ -174,10 +132,6 @@ class View:
         print(f"Quel nouveau nom souhaitez-vous donner au contrat {contract_name}?")
         return input("").strip()
 
-    @staticmethod
-    def error_price() -> float:
-        return -1.00
-
     @classmethod
     def check_price_validity(cls, price: str) -> float:
         try:
@@ -212,18 +166,6 @@ class View:
     def asks_customer_mail(cls) -> str:
         cls.quit_print("Veuillez renseigner l'adresse email du client")
         return input("").strip()
-
-    @staticmethod
-    def missing_collaborator(username: str) -> None:
-        print(f"Le collaborateur {username} n'est pas présent dans la base de données")
-
-    @staticmethod
-    def different_passwords_prompt() -> None:
-        print("Vous avez donné deux mots de passe différents")
-
-    @staticmethod
-    def modification_canceled() -> None:
-        print("Annulation de la demande de modification\n")
 
     @classmethod
     def wants_to_change_password(cls) -> bool:
@@ -264,14 +206,6 @@ class View:
     def modification_done():
         print("Modification effectuée !\n")
 
-    @staticmethod
-    def unknown_sales_collaborator(collab_name: str) -> None:
-        print(f"Le collaborateur {collab_name} n'existe pas ou n'appartient pas au département commercial.")
-
-    @staticmethod
-    def unknown_support_collaborator(collab_name: str) -> None:
-        print(f"Le collaborateur {collab_name} n'existe pas ou n'appartient pas au département support.")
-
     @classmethod
     def asks_event_name(cls) -> str:
         cls.quit_print("Comment se nomme l'événement ?")
@@ -300,51 +234,6 @@ class View:
 
         return cls.choice_loop(cls.what_to_do(), choices)
 
-    @staticmethod
-    def collab_display(collaborator: Collaborator):
-        print(f"\n   Nom d'utilisateur : {collaborator.username}")
-        print(f"   rôle : {collaborator.role}\n")
-
-    @staticmethod
-    def contract_display(contract: Contract):
-        print(f"\n   Nom :{contract.name}")
-        print(f"   Nom du client : {contract.customer.full_name}")
-        print(f"   Entreprise du client : {contract.customer.company_name}")
-        print(f"   Nom du commercial : {contract.collaborator.username}")
-        print(f"   Montant total : {contract.total_value}€")
-        print(f"   Reste à payer : {contract.remains_to_be_paid}€")
-        is_signed: str = "Oui" if contract.signed else "Non"
-        print(f"   Signé : {is_signed}\n")
-
-    @staticmethod
-    def display_customer_detail(customer: Customer):
-        print(f"\n   Nom : {customer.full_name}")
-        print(f"   Mail : {customer.mail}")
-        print(f"   Entreprise : {customer.company_name}")
-        print(f"   Créé le : {customer.creation_date}")
-        print(f"   Dernière mise à jour : {customer.last_update}")
-        print(f"   Nom de son contact : {customer.collaborator.username}")
-        print(f"   Informations complémentaires : {customer.information}\n")
-
-    @classmethod
-    def display_customers_detail(cls, my_customers_list: list) -> None:
-        [print(f"- Client : {customer.full_name} - mail : {customer.mail} - entreprise : {customer.company_name}")
-         for customer in my_customers_list]
-        print()
-
-    @staticmethod
-    def event_display(event: Event) -> None:
-        print(f"\n   Nom :{event.name}")
-        print(f"   Nom du client : {event.contract.customer.full_name}")
-        print(f"   Contrat : {event.contract.name}")
-        print(f"   Début : {event.starting_time}")
-        print(f"   Fin : {event.ending_time}")
-        print(f"   Adresse : {event.address}")
-        print(f"   Nombre de participants : {event.attendant_number}")
-        support_name: str = "Aucun" if event.support is None else event.support.username
-        print(f"   Technicien : {support_name}")
-        print(f"   Commentaires : {event.information}\n")
-
     @classmethod
     def asks_event_date(cls, is_starting=True) -> tuple[str, str]:
         context: str = "débutera" if is_starting else "terminera"
@@ -369,5 +258,5 @@ class View:
         return input("")
 
     @staticmethod
-    def same_collaborator_prompt():
+    def same_collaborator_prompt() -> None:
         print("Vous avez choisit de réattribuer le contrat au même collaborateur.")
