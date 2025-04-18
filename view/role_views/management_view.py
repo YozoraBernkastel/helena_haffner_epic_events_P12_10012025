@@ -17,10 +17,6 @@ class ManagementView(View):
         return cls.choice_loop(cls.category_question(), choices_list)
 
     @classmethod
-    def asks_collab_password(cls) -> str:
-        return cls.asks_password_template("Définissez son mot de passe:")
-
-    @classmethod
     def collab_list_menu(cls):
         choices_list: list = ["Consulter la liste de tous les collaborateurs", "Consulter la liste d'un département"]
 
@@ -68,7 +64,6 @@ class ManagementView(View):
 
     @classmethod
     def asks_contract_total_value(cls):
-        # todo possible utiliser la lib mock pour utiliser le décorateur side_effect, permettant d'entrer des inputs
         while True:
             print("Quel est le montant total du contrat ?")
             new_price = input("").strip()

@@ -1,5 +1,5 @@
 from view.generic_view import View
-from models.db_models import Customer, Contract
+from models.db_models import Contract
 
 
 class SalesView(View):
@@ -95,3 +95,7 @@ class SalesView(View):
     def no_event_contract(contract: Contract):
         print(f"\n   Nom du contrat : {contract.name}")
         print(f"   Mail du client : {contract.customer.mail}\n")
+
+    @staticmethod
+    def all_event_have_support() -> None:
+        print("Tous les événements de vos contrats sont supervisés par un collaborateur du support !")

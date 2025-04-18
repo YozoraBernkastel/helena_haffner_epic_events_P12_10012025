@@ -1,4 +1,5 @@
-from models.db_models import Collaborator, Customer, Contract, Event
+from os import path
+from models.db_models import db_name, Collaborator, Customer, Contract, Event
 from control.generic_controller import GenericController
 from control.management_controller import ManagementController
 from control.sales_controller import SalesController
@@ -7,7 +8,7 @@ from view.generic_view import View
 from Helper.jwt_helper import JwtHelper
 from models.picture_encoding import PictureEncoding
 from models.picture_decoding import PictureDecoding
-from settings.settings import MANAGEMENT, SALES, SUPPORT
+from settings.settings import MANAGEMENT, SALES
 
 
 class Controller(GenericController):
@@ -18,13 +19,25 @@ class Controller(GenericController):
 
         self.init_db()
 
-    @staticmethod
-    def init_db():
-        # todo permettre de créer un premier compte utilisateur (management seulement) si aucune db n'existe !!
-        Collaborator.create_table()
-        Customer.create_table()
-        Contract.create_table()
-        Event.create_table()
+    def first_user_creation(self):
+        View.create_first_user_warning()
+        username, password = self.choose_username_and_password()
+
+        if self.is_quitting(username):
+            return
+
+        Collaborator.create_collab(username, password, MANAGEMENT)
+        View.create_with_success()
+
+    def init_db(self):
+
+        if not path.exists(db_name):
+            Collaborator.create_table()
+            Customer.create_table()
+            Contract.create_table()
+            Event.create_table()
+            if Collaborator.select().count() == 0:
+                self.first_user_creation()
 
     def log_in(self) -> None:
         while self.user is None:

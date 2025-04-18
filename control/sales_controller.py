@@ -1,8 +1,7 @@
 from datetime import datetime
 from peewee import ModelSelect
-
 from settings.settings import SUPPORT
-from view.sales_view import SalesView as View
+from view.role_views.sales_view import SalesView as View
 from models.db_models import Collaborator, Customer, Event, Contract
 from control.generic_controller import GenericController
 
@@ -67,7 +66,6 @@ class SalesController(GenericController):
             self.customer_collaborator_modification(customer)
         elif choice == "6":
             self.information_modification(customer)
-            pass
         else:
             return
 
@@ -88,7 +86,7 @@ class SalesController(GenericController):
             return
 
         View.display_customer_detail(customer)
-        customer_events: list = Event.select().join(Contract, on=(Event.contract == Contract.id)).where(
+        customer_events: list = Event.select().join(Contract, on=(Event.contract == Contract)).where(
             Contract.customer == customer).execute()
         [View.event_display(event) for event in customer_events]
 
@@ -208,11 +206,15 @@ class SalesController(GenericController):
 
         View.create_with_success(f"de l'événement {event_name}")
 
-    def all_events_without_support_list(self):
+    def all_events_without_support_list(self) -> None:
         without_support_events = Event.select().join(Contract).where(
             Contract.collaborator == self.user and Event.support.is_null(True)).execute()
 
-        [View.event_display(event) for event in without_support_events]
+        if without_support_events:
+            [View.event_display(event) for event in without_support_events]
+            return
+
+        View.all_event_have_support()
 
     def display_event(self) -> None:
         event = self.find_event()
