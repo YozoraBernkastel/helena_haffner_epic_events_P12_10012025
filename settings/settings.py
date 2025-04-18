@@ -8,8 +8,3 @@ MANAGEMENT: str = "gestion"
 SUPPORT: str = "support"
 SALES: str = "commercial"
 ROLES_LIST: list[str] = [MANAGEMENT, SUPPORT, SALES]
-
-# FR_MANAGEMENT: str = "gestion"
-# FR_SUPPORT: str = "support"
-# FR_SALES: str = "commercial"
-# ROLES_LIST: list[str] = [MANAGEMENT, SUPPORT, SALES]

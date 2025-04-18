@@ -9,7 +9,8 @@ class SalesView(View):
 
     @classmethod
     def events_menu(cls) -> str:
-        choices_list: list = ["Créer un événement", "Voir tous les événements", "Voir un événement"]
+        choices_list: list = ["Créer un événement", "Voir tous les événements",
+                              "Voir les événements de mes contrats sans support", "Voir un événement"]
 
         return cls.choice_loop(cls.what_to_do(), choices_list)
 

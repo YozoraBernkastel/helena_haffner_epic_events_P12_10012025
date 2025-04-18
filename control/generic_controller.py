@@ -79,8 +79,7 @@ class GenericController:
             View.unknown_sales_collaborator(collab_name)
             return
 
-        customer.collaborator = collaborator
-        customer.save()
+        customer.change_collab(collaborator)
         View.modification_done()
 
     @staticmethod

@@ -88,7 +88,8 @@ class SalesController(GenericController):
             return
 
         View.display_customer_detail(customer)
-        customer_events: list = Event.select().join(Contract, on=(Event.contract == Contract.id)).where(Contract.customer == customer).execute()
+        customer_events: list = Event.select().join(Contract, on=(Event.contract == Contract.id)).where(
+            Contract.customer == customer).execute()
         [View.event_display(event) for event in customer_events]
 
     def delete_customer(self) -> None:
@@ -207,6 +208,12 @@ class SalesController(GenericController):
 
         View.create_with_success(f"de l'événement {event_name}")
 
+    def all_events_without_support_list(self):
+        without_support_events = Event.select().join(Contract).where(
+            Contract.collaborator == self.user and Event.support.is_null(True)).execute()
+
+        [View.event_display(event) for event in without_support_events]
+
     def display_event(self) -> None:
         event = self.find_event()
         if not self.is_quitting(event):
@@ -220,6 +227,8 @@ class SalesController(GenericController):
         elif choice == "2":
             self.all_events_list()
         elif choice == "3":
+            self.all_events_without_support_list()
+        elif choice == "4":
             self.display_event()
         else:
             return

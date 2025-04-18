@@ -51,10 +51,10 @@ class Controller(GenericController):
     def role_controller(self):
         if self.user.role == MANAGEMENT:
             return ManagementController(self.user)
-        if self.user.role == SUPPORT:
-            return SupportController(self.user)
         if self.user.role == SALES:
             return SalesController(self.user)
+
+        return SupportController(self.user)
 
     def display_welcome_menu(self) -> None:
         token: str = self.picture_decoding.token_getter()

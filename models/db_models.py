@@ -70,6 +70,14 @@ class Customer(Model):
     class Meta:
         database = db
 
+    def change_collab(self, new_collab: Collaborator):
+        self.collaborator = new_collab
+        self.save()
+
+        all_contracts = Contract.select().where(Contract.customer == self).execute()
+
+        [contract.change_collab(new_collab) for contract in all_contracts]
+
 
 class Contract(Model):
     name = CharField(unique=True)
@@ -84,6 +92,10 @@ class Contract(Model):
     class Meta:
         database = db
 
+    def change_collab(self, new_collab: Collaborator):
+        self.collaborator = new_collab
+        self.save()
+
 class Event(Model):
     name = CharField(unique=True)
     contract = ForeignKeyField(Contract, backref="events")
@@ -96,3 +108,10 @@ class Event(Model):
 
     class Meta:
         database = db
+
+    def new_support(self, new_support: Collaborator | None) -> None:
+        self.support = new_support
+        self.save()
+
+    def has_no_support(self):
+        return self.support is None
