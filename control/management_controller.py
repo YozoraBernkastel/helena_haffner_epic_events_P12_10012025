@@ -108,6 +108,10 @@ class ManagementController(GenericController):
         if self.is_quitting(username):
             return
 
+        if username == self.user.username:
+            View.cannot_delete_own_account()
+            return
+
         collaborator = Collaborator.get_or_none(username=username)
 
         if collaborator is None:

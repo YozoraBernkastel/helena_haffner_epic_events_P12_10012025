@@ -65,3 +65,7 @@ class UnwantedView:
     @staticmethod
     def unknown_support_collaborator(collab_name: str) -> None:
         print(f"Le collaborateur {collab_name} n'existe pas ou n'appartient pas au département support.")
+
+    @staticmethod
+    def cannot_delete_own_account():
+        print("Vous ne pouvez pas supprimer votre propre compte.")
