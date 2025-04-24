@@ -82,7 +82,6 @@ class GenericController:
 
     @classmethod
     def account_menu(cls, user):
-        # todo à compléter avec le changement de nom d'utilisateur
         cls.change_password(user)
 
     def customer_collaborator_modification(self, customer) -> None:
