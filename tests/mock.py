@@ -1,6 +1,8 @@
 from datetime import datetime
 from settings.settings import MANAGEMENT, SUPPORT, SALES
 
+q: str = "q"
+question: str = "Est-ce une question ?"
 
 UNKNOWN_USERNAME: str = "unknown username"
 UNKNOWN_MAIL: str = "unknown mail"
@@ -11,8 +13,11 @@ MANAGEMENT_1: dict = {"username": "management1", "password": "management1", "rol
 SUPPORT_1: dict = {"username": "support1", "password": "support1", "role": SUPPORT}
 SALES_1 = {"username": "sales1", "password": "sales", "role": SALES}
 
+TO_CHANGE_COLLAB: dict = {"username": "changelin", "password": "changelin", "role": SUPPORT}
+
 CUSTOMER_1: dict = {"fullname": "Kust Homer", "mail": "kusthomer@mail.com", "phone": "0102030405",
                     "company_name": "Entre deux prises", "information": "Aime les pâtes et le jambon "}
+CUSTOMER_1_NEW_NAME: str = "Kurt Amer"
 
 CONTRACT_1: dict = {"name": "contrat1", "total": 41.25}
 

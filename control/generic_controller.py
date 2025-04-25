@@ -237,8 +237,9 @@ class GenericController:
 
             View.unknown_event()
 
-    def event_display(self):
-        event = self.find_event()
+    @classmethod
+    def event_display(cls):
+        event = cls.find_event()
 
         if isinstance(event, Event):
             View.event_display(event)
@@ -248,13 +249,14 @@ class GenericController:
         new_info = View.add_info_prompt()
         return f"{old_info} {new_info} "
 
-    def information_modification(self, obj: Customer | Event) -> None:
+    @classmethod
+    def information_modification(cls, obj: Customer | Event) -> None:
         choice = View.info_menu()
 
         if choice == "1":
-            obj.information = self.add_customer_info(obj.information)
+            obj.information = cls.add_customer_info(obj.information)
         elif choice == "2":
-            obj.information = self.add_customer_info()
+            obj.information = cls.add_customer_info()
         elif choice == "3":
             obj.information = ""
         else:
@@ -263,8 +265,9 @@ class GenericController:
         obj.save()
         View.modification_done()
 
-    def modify_obj(self, obj, attribute: str, new_data: str) -> None:
-        if self.is_quitting(new_data):
+    @classmethod
+    def modify_obj(cls, obj, attribute: str, new_data: str) -> None:
+        if cls.is_quitting(new_data):
             View.modification_canceled()
             return
 
@@ -274,14 +277,15 @@ class GenericController:
         obj.save()
         View.modification_done()
 
-    def create_specific_datetime(self, is_starting=True) -> datetime | str:
+    @classmethod
+    def create_specific_datetime(cls, is_starting=True) -> datetime | str:
         while True:
             date, hour = View.asks_event_date(is_starting)
 
-            if self.is_quitting(date) or self.is_quitting(hour):
+            if cls.is_quitting(date) or cls.is_quitting(hour):
                 return "q"
 
-            formated_date = self.convert_str_in_datetime(date, hour)
+            formated_date = cls.convert_str_in_datetime(date, hour)
 
             if isinstance(formated_date, datetime):
                 return formated_date

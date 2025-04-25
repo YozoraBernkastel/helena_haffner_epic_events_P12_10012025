@@ -4,10 +4,6 @@ from models.db_models import Contract
 
 class SalesView(View):
     @classmethod
-    def contracts_menu(cls) -> None:
-        pass
-
-    @classmethod
     def events_menu(cls) -> str:
         choices_list: list = ["Créer un événement", "Voir tous les événements",
                               "Voir les événements de mes contrats sans support", "Voir un événement"]

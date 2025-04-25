@@ -1,7 +1,8 @@
 import pytest
 from peewee import SqliteDatabase
+from control.management_controller import ManagementController
 from models.db_models import Collaborator, Customer, Contract, Event
-from tests.mock import MANAGEMENT_1, SALES_1, SUPPORT_1, CUSTOMER_1, CONTRACT_1, EVENT_1
+from tests.mock import MANAGEMENT_1, SALES_1, SUPPORT_1, TO_CHANGE_COLLAB, CUSTOMER_1, CONTRACT_1, EVENT_1
 
 MODELS = [Collaborator, Customer, Contract, Event]
 
@@ -11,6 +12,8 @@ def collaborators_setup():
                                role=MANAGEMENT_1["role"])
     Collaborator.create_collab(username=SALES_1["username"], password=SALES_1["password"], role=SALES_1["role"])
     Collaborator.create_collab(username=SUPPORT_1["username"], password=SUPPORT_1["password"], role=SUPPORT_1["role"])
+    Collaborator.create_collab(username=TO_CHANGE_COLLAB["username"], password=TO_CHANGE_COLLAB["password"],
+                               role=TO_CHANGE_COLLAB["role"])
 
 
 def customers_setup():
@@ -58,3 +61,7 @@ def db_connection():
 
     test_db.close()
 
+@pytest.fixture()
+def management_controller():
+    user: Collaborator = Collaborator.get(username=MANAGEMENT_1["username"])
+    yield ManagementController(user)
