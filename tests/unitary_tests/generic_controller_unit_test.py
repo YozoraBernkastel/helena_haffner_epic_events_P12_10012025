@@ -7,7 +7,7 @@ from tests.mock import (q, MANAGEMENT_1, UNKNOWN_USERNAME, CUSTOMER_1, UNKNOWN_M
 
 
 
-def test_is_quitting(db_connection):
+def test_is_quitting():
     assert GenericController.is_quitting("q")
     assert not GenericController.is_quitting("a")
 

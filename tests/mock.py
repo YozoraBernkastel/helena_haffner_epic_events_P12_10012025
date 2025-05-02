@@ -5,7 +5,7 @@ q: str = "q"
 question: str = "Est-ce une question ?"
 
 UNKNOWN_USERNAME: str = "unknown username"
-UNKNOWN_MAIL: str = "unknown mail"
+UNKNOWN_MAIL: str = "unknown@mail"
 UNKNOWN_CONTRACT_NAME: str = "unkown contract"
 UNKNOWN_EVENT_NAME: str = "unkown event"
 
@@ -18,6 +18,10 @@ TO_CHANGE_COLLAB: dict = {"username": "changelin", "password": "changelin", "rol
 CUSTOMER_1: dict = {"fullname": "Kust Homer", "mail": "kusthomer@mail.com", "phone": "0102030405",
                     "company_name": "Entre deux prises", "information": "Aime les pâtes et le jambon "}
 CUSTOMER_1_NEW_NAME: str = "Kurt Amer"
+
+
+TO_CREATE_CUSTOMER: dict = {"mail": "Csion@mail.com", "fullname": "Crea Sion", "company_name": "Entre trous prises",
+                            "phone": "0102030405", "information": "est un nouveau client "}
 
 CONTRACT_1: dict = {"name": "contrat1", "total": 41.25}
 

@@ -1,4 +1,4 @@
-from getpass import getpass
+import getpass
 from view.unwanted_view import UnwantedView
 from view.display_obj_view import DisplayView
 from settings.settings import MANAGEMENT, SUPPORT, SALES
@@ -16,7 +16,7 @@ class View(UnwantedView, DisplayView):
         username = input("")
         username = username.strip()
         password_message: str = "Nous avons également besoin de votre mot de passe:"
-        password = getpass(prompt=password_message, stream=None)
+        password = getpass.getpass(prompt=password_message, stream=None)
         password = password
 
         return username, password
@@ -259,4 +259,4 @@ class View(UnwantedView, DisplayView):
 
     @staticmethod
     def same_collaborator_prompt() -> None:
-        print("Vous avez choisit de réattribuer le contrat au même collaborateur.")
+        print("Vous avez choisi de réattribuer le contrat au même collaborateur.")

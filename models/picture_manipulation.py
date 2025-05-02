@@ -9,7 +9,6 @@ class PictureManipulation:
         self.picture_3_path: str = "pictures/wallpaper_3.png"
         self.shift_num: int = 7
 
-
     @staticmethod
     def import_picture(picture_path: str):
         if path.exists(picture_path):

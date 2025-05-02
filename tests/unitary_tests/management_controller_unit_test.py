@@ -1,8 +1,8 @@
 from control.management_controller import ManagementController
 from models.db_models import Collaborator
-from settings.settings import MANAGEMENT, SUPPORT, SALES
+from settings.settings import SALES
 from tests.conftest import management_controller
-from tests.mock import TO_CHANGE_COLLAB, q, MANAGEMENT_1
+from tests.mock import TO_CHANGE_COLLAB, q
 
 
 def test_role_change(management_controller, monkeypatch):

@@ -62,3 +62,8 @@ def test_update_contract_remain(monkeypatch):
 
     remain_to_paid: float = 0.00
     assert View.update_contract_remain(remain_to_paid) == remain_to_paid
+
+
+def test_what_to_do():
+    assert View.what_to_do() == "Que souhaitez-vous faire ?"
+

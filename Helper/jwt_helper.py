@@ -5,15 +5,6 @@ from datetime import timedelta, datetime, timezone
 
 
 class JwtHelper:
-
-    @staticmethod
-    def export_token():
-        pass
-
-    @staticmethod
-    def import_token():
-        pass
-
     @staticmethod
     def __load_jwt_detail() -> tuple[str, str]:
         dotenv.load_dotenv()

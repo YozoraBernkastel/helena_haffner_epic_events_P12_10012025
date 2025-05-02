@@ -1,6 +1,8 @@
 import pytest
 from peewee import SqliteDatabase
 from control.management_controller import ManagementController
+from control.sales_controller import SalesController
+from control.support_controller import SupportController
 from models.db_models import Collaborator, Customer, Contract, Event
 from tests.mock import MANAGEMENT_1, SALES_1, SUPPORT_1, TO_CHANGE_COLLAB, CUSTOMER_1, CONTRACT_1, EVENT_1
 
@@ -65,3 +67,13 @@ def db_connection():
 def management_controller():
     user: Collaborator = Collaborator.get(username=MANAGEMENT_1["username"])
     yield ManagementController(user)
+
+@pytest.fixture()
+def sales_controller():
+    user: Collaborator = Collaborator.get(username=SALES_1["username"])
+    yield SalesController(user)
+
+@pytest.fixture()
+def support_controller():
+    user: Collaborator = Collaborator.get(username=SUPPORT_1["username"])
+    yield SupportController(user)
