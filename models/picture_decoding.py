@@ -2,7 +2,7 @@ from PIL import Image
 from models.picture_manipulation import PictureManipulation
 from settings.settings import DATA_INFO_LEN, DOT
 
-# todo COMMENTER LE CODE !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
 class PictureDecoding(PictureManipulation):
     def __init__(self):
         super().__init__()

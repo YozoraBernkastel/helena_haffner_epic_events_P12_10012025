@@ -107,7 +107,7 @@ class View(UnwantedView, DisplayView):
     @classmethod
     def asks_password_template(cls, prompt: str) -> str:
         password_message = f"{prompt} {cls.brackets_quit_str()} :\n"
-        return getpass(prompt=password_message, stream=None)
+        return getpass.getpass(prompt=password_message, stream=None)
 
     @classmethod
     def asks_actual_password(cls) -> str:

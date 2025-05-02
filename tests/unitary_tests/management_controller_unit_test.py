@@ -2,7 +2,7 @@ from control.management_controller import ManagementController
 from models.db_models import Collaborator
 from settings.settings import SALES
 from tests.conftest import management_controller
-from tests.mock import TO_CHANGE_COLLAB, q
+from tests.mock import TO_CHANGE_COLLAB, q, mock_get_pass
 
 
 def test_role_change(management_controller, monkeypatch):
@@ -43,8 +43,8 @@ def test_username_change(management_controller, monkeypatch):
     assert Collaborator.get_or_none(username=old_username) is None
     assert Collaborator.get_or_none(username=new_username) is not None
 
-# def test_check_user_password(management_controller, monkeypatch):
-#     controller: ManagementController = management_controller
-#     monkeypatch.setattr('builtins.input', lambda _: MANAGEMENT_1["password"])
-#     assert controller.check_user_password()
+def test_check_user_password(management_controller, monkeypatch):
+    controller: ManagementController = management_controller
+    monkeypatch.setattr('getpass.getpass', mock_get_pass)
+    assert controller.check_user_password() is not None
 

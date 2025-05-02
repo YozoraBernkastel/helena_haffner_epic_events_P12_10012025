@@ -1,7 +1,7 @@
 from control.main_controller import Controller, ManagementController, SalesController, SupportController
 from models.db_models import Collaborator
 from settings.settings import MANAGEMENT, SALES, SUPPORT
-from tests.mock import MANAGEMENT_1, SALES_1, SUPPORT_1
+from tests.mock import MANAGEMENT_1, SALES_1, SUPPORT_1, mock_get_pass
 
 
 def test_role_controller():
@@ -28,9 +28,6 @@ def test_role_controller():
 
 def test_log_in(monkeypatch):
     controller = Controller()
-
-    def mock_get_pass(*args, **kwargs):
-        return MANAGEMENT_1["password"]
 
     monkeypatch.setattr('builtins.input', lambda _: MANAGEMENT_1["username"])
     monkeypatch.setattr('getpass.getpass', mock_get_pass)

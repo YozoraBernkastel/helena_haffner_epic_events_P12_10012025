@@ -4,7 +4,7 @@ from control.management_controller import ManagementController
 from control.sales_controller import SalesController
 from control.support_controller import SupportController
 from models.db_models import Collaborator, Customer, Contract, Event
-from tests.mock import MANAGEMENT_1, SALES_1, SUPPORT_1, TO_CHANGE_COLLAB, CUSTOMER_1, CONTRACT_1, EVENT_1
+from tests.mock import MANAGEMENT_1, SALES_1, SUPPORT_1, TO_CHANGE_COLLAB, CUSTOMER_1, CUSTOMER_2, CONTRACT_1, EVENT_1
 
 MODELS = [Collaborator, Customer, Contract, Event]
 
@@ -23,6 +23,10 @@ def customers_setup():
 
     Customer.create(full_name=CUSTOMER_1["fullname"], mail=CUSTOMER_1["mail"], phone=CUSTOMER_1["phone"],
                     company_name=CUSTOMER_1["company_name"], information=CUSTOMER_1["information"],
+                    collaborator=collab_1)
+
+    Customer.create(full_name=CUSTOMER_2["fullname"], mail=CUSTOMER_2["mail"], phone=CUSTOMER_2["phone"],
+                    company_name=CUSTOMER_2["company_name"], information=CUSTOMER_2["information"],
                     collaborator=collab_1)
 
 
