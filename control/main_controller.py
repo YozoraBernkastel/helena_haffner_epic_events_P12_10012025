@@ -20,6 +20,9 @@ class Controller(GenericController):
         self.init_db()
 
     def first_user_creation(self):
+        if Collaborator.select().count() > 0:
+            return
+
         View.create_first_user_warning()
         username, password = self.choose_username_and_password()
 
@@ -30,14 +33,12 @@ class Controller(GenericController):
         View.create_with_success()
 
     def init_db(self):
-
         if not path.exists(db_name):
             Collaborator.create_table()
             Customer.create_table()
             Contract.create_table()
             Event.create_table()
-            if Collaborator.select().count() == 0:
-                self.first_user_creation()
+            self.first_user_creation()
 
     def log_in(self) -> None:
         while self.user is None:

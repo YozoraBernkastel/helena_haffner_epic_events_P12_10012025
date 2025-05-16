@@ -2,7 +2,7 @@ from PIL import ImageFile, Image
 from models.picture_manipulation import PictureManipulation
 from settings.settings import MAX_ASCII_NUM, DATA_FORMAT, DATA_INFO_BINARY_FORMAT, DOT
 
-# todo COMMENTER LE CODE !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
 class PictureEncoding(PictureManipulation):
     def __init__(self):
         super().__init__()
@@ -95,7 +95,7 @@ class PictureEncoding(PictureManipulation):
 
     def crypt_token(self, token: str) -> None:
         if not token:
-            return None
+            return
 
         split_token: list = token.split(DOT)
         binary_token: list = []
@@ -104,3 +104,4 @@ class PictureEncoding(PictureManipulation):
             binary_token.append(self.convert_token_part(token_part))
 
         self.picture_token_link(binary_token)
+        return
