@@ -1,13 +1,12 @@
 from PIL import ImageFile, Image
 from models.picture_manipulation import PictureManipulation
-from settings.settings import MAX_ASCII_NUM, DATA_FORMAT, DATA_INFO_BINARY_FORMAT, DOT
+from settings.settings import DATA_FORMAT, DATA_INFO_BINARY_FORMAT, DOT
 
 
 class PictureEncoding(PictureManipulation):
     def __init__(self):
         super().__init__()
         self.pictures_list: list = [self.picture_1_path, self.picture_2_path, self.picture_3_path]
-        self.ascii_length = len(str(MAX_ASCII_NUM << self.shift_num))
 
     @staticmethod
     def mod_pix(picture_data: list[list[tuple]], data: list[list[str]]):

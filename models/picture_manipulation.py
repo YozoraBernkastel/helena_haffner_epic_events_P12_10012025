@@ -1,5 +1,6 @@
 from os import path
 from PIL import Image
+from settings.settings import MAX_ASCII_NUM, SHIFTER
 
 
 class PictureManipulation:
@@ -7,7 +8,8 @@ class PictureManipulation:
         self.picture_1_path: str = "pictures/wallpaper_1.png"
         self.picture_2_path: str = "pictures/wallpaper_2.png"
         self.picture_3_path: str = "pictures/wallpaper_3.png"
-        self.shift_num: int = 7
+        self.shift_num: int = SHIFTER
+        self.ascii_length = len(str(MAX_ASCII_NUM << self.shift_num))
 
     @staticmethod
     def import_picture(picture_path: str):
