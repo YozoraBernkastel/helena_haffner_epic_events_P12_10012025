@@ -29,6 +29,7 @@ class JwtHelper:
         try:
             secret, algorithm = JwtHelper.__load_jwt_detail()
             decoded_token = jwt.decode(token, secret, algorithm)
-            return int(decoded_token["user_id"])
+
+            return int(decoded_token["user_id"]) if decoded_token["exp"] > int(datetime.now().timestamp()) else None
         except:
             return None
