@@ -30,10 +30,7 @@ class View(UnwantedView, DisplayView):
         cls.print_choices(["oui", "non"])
         choice = input("").strip()
 
-        if choice == "1" or choice.lower() == "oui":
-            return True
-
-        return False
+        return choice == "1" or choice.lower() == "oui"
 
     @staticmethod
     def create_with_success(obj: str = "") -> None:
