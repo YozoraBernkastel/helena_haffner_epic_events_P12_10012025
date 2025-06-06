@@ -109,7 +109,7 @@ class SalesController(GenericController):
 
     def customer_detail(self) -> None:
         """
-
+        Display Customer profil and their Events.
         :return:
         """
         customer: Customer = self.find_customer(collaborator=self.user)
@@ -122,12 +122,20 @@ class SalesController(GenericController):
         [View.event_display(event) for event in customer_events]
 
     def delete_customer(self) -> None:
+        """
+        Delete a Customer
+        :return:
+        """
         customer = self.find_customer(collaborator=self.user)
         if self.is_quitting(customer):
             return
         customer.delete_instance()
 
     def customers_list(self):
+        """
+        User choose to display all the customers or their Customers.
+        :return:
+        """
         choice = View.customer_choice()
 
         if choice == "1":
@@ -138,6 +146,10 @@ class SalesController(GenericController):
             return
 
     def customers_menu(self) -> None:
+        """
+        Menu to interact with the Customer model.
+        :return:
+        """
         choice = View.customer_menu()
 
         if choice == "1":
@@ -153,7 +165,12 @@ class SalesController(GenericController):
         else:
             return
 
-    def my_contract_detail(self, my_contract_list: ModelSelect) -> None:
+    def my_contracts_detail(self, my_contract_list: ModelSelect) -> None:
+        """
+        Display all the Contracts of the user.
+        :param my_contract_list: list of Contracts objects.
+        :return:
+        """
         while True:
             contract_name = View.asks_contract_name()
             if self.is_quitting(contract_name):
@@ -173,6 +190,10 @@ class SalesController(GenericController):
             View.unknown_contract(contract_name)
 
     def contracts_menu(self) -> None:
+        """
+        Menu to interact with the Contracts linked to the user.
+        :return:
+        """
         choice = View.sales_collab_contract_menu()
 
         if choice == "5":
@@ -185,19 +206,27 @@ class SalesController(GenericController):
                 without_event = [contract for contract in my_contracts if Event.get_or_none(contract=contract) is None]
                 [View.no_event_contract(contract) for contract in without_event]
             elif choice == "3":
-                self.my_contract_detail(my_contracts)
+                self.my_contracts_detail(my_contracts)
             elif choice == "4":
                 self.contract_detail_modification(self.user)
             else:
                 return
 
     def event_name(self) -> str:
+        """
+        While loop used to give a name to an Event.
+        :return: event_name or quit str.
+        """
         while True:
             event_name = View.asks_event_name()
             if self.is_quitting(event_name) or self.is_available_event_name(event_name):
                 return event_name
 
     def events_creation(self) -> None:
+        """
+        Creation of an Event.
+        :return:
+        """
         event_name: str = self.event_name()
         if self.is_quitting(event_name):
             return
@@ -238,6 +267,10 @@ class SalesController(GenericController):
         View.create_with_success(f"de l'événement {event_name}")
 
     def all_events_without_support_list(self) -> None:
+        """
+        Display of all the Events obj which have no support (Collaborator)
+        :return:
+        """
         without_support_events = Event.select().join(Contract).where(
             Contract.collaborator == self.user and Event.support.is_null(True)).execute()
 
@@ -248,11 +281,19 @@ class SalesController(GenericController):
         View.all_event_have_support()
 
     def display_event(self) -> None:
+        """
+        Display the chosen Event details.
+        :return:
+        """
         event = self.find_event()
         if not self.is_quitting(event):
             View.event_display(event)
 
     def event_menu(self):
+        """
+        Menu to interact with the Event Model.
+        :return:
+        """
         choice = View.events_menu()
 
         if choice == "1":
@@ -267,6 +308,10 @@ class SalesController(GenericController):
             return
 
     def home_menu(self) -> None:
+        """
+        First menu of a Collaborator identified with the role of "sales"
+        :return:
+        """
         while True:
             choice = View.menu()
 
