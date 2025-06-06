@@ -3,8 +3,8 @@ from tests.mock import TO_CREATE_CUSTOMER, CUSTOMER_2, CUSTOMER_1_NEW_NAME, UNKN
 
 
 def test_customer_interactions(monkeypatch, sales_controller):
-    input_values: list = (list(TO_CREATE_CUSTOMER.values()) +
-                          [TO_CREATE_CUSTOMER["mail"], TO_CREATE_CUSTOMER["mail"]])
+    input_values: list = (list(TO_CREATE_CUSTOMER.values())
+                          + [TO_CREATE_CUSTOMER["mail"], TO_CREATE_CUSTOMER["mail"]])
 
     monkeypatch.setattr('builtins.input', lambda _: input_values.pop(0))
     sales_controller.customer_creation()

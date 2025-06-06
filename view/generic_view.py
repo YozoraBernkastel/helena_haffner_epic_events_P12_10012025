@@ -30,10 +30,7 @@ class View(UnwantedView, DisplayView):
         cls.print_choices(["oui", "non"])
         choice = input("").strip()
 
-        if choice == "1" or choice.lower() == "oui":
-            return True
-
-        return False
+        return choice == "1" or choice.lower() == "oui"
 
     @staticmethod
     def create_with_success(obj: str = "") -> None:
@@ -140,7 +137,7 @@ class View(UnwantedView, DisplayView):
             float_price: float = float(price)
             assert float_price >= 0.00
             return float_price
-        except:
+        except Exception:
             print("Erreur dans le montant.")
             return cls.error_price()
 

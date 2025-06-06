@@ -1,6 +1,8 @@
 import bcrypt
-from peewee import *
+from peewee import (SqliteDatabase, Model, CharField, BitField, DateTimeField, ForeignKeyField, DoubleField,
+                    BooleanField, IntegerField)
 from datetime import datetime
+
 
 db_name: str = "database"
 db = SqliteDatabase(db_name)
@@ -96,6 +98,7 @@ class Contract(Model):
     def change_collab(self, new_collab: Collaborator):
         self.collaborator = new_collab
         self.save()
+
 
 class Event(Model):
     name = CharField(unique=True)

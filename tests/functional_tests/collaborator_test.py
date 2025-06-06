@@ -9,6 +9,3 @@ def test_find_collaborator(db_connection):
 
     collab = Collaborator.find_collaborator(SUPPORT_1["username"], MANAGEMENT_1["password"])
     assert collab is None
-
-
-

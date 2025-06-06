@@ -31,5 +31,5 @@ class JwtHelper:
             decoded_token = jwt.decode(token, secret, algorithm)
 
             return int(decoded_token["user_id"]) if decoded_token["exp"] > int(datetime.now().timestamp()) else None
-        except:
+        except Exception:
             return None

@@ -85,12 +85,3 @@ class Controller(GenericController):
 
         role_controller = self.role_controller()
         role_controller.home_menu()
-
-
-
-
-
-
-
-
-

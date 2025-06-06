@@ -53,6 +53,7 @@ def objects_setup():
     contrats_setup()
     events_setup()
 
+
 # create a temporary database for tests
 @pytest.fixture(scope="session")
 def db_connection():
@@ -67,15 +68,18 @@ def db_connection():
 
     test_db.close()
 
+
 @pytest.fixture()
 def management_controller():
     user: Collaborator = Collaborator.get(username=MANAGEMENT_1["username"])
     yield ManagementController(user)
 
+
 @pytest.fixture()
 def sales_controller():
     user: Collaborator = Collaborator.get(username=SALES_1["username"])
     yield SalesController(user)
+
 
 @pytest.fixture()
 def support_controller():

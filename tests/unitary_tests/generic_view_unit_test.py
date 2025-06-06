@@ -2,6 +2,7 @@ from view.generic_view import View
 from settings.settings import ROLES_LIST
 from tests.mock import question
 
+
 def test_yes_or_no_choice(monkeypatch):
     monkeypatch.setattr('builtins.input', lambda _: "1")
     assert View.yes_or_no_choice()
@@ -29,10 +30,12 @@ def test_is_choice_valid():
     assert not View.is_choice_valid("-2", max_range)
     assert not View.is_choice_valid("azerty", max_range)
 
+
 def test_choice_loop(monkeypatch):
     user_input: str = str(len(ROLES_LIST))
     monkeypatch.setattr('builtins.input', lambda _: user_input)
     assert View.choice_loop(question, ROLES_LIST) == user_input
+
 
 def test_check_price_validity():
     int_format_price: str = "12"
@@ -55,6 +58,7 @@ def test_check_price_validity():
     assert isinstance(valid_price, float)
     assert invalid_price == View.error_price()
 
+
 def test_update_contract_remain(monkeypatch):
     remain_to_paid: float = 99.66
     monkeypatch.setattr('builtins.input', lambda _: str(remain_to_paid))
@@ -66,4 +70,3 @@ def test_update_contract_remain(monkeypatch):
 
 def test_what_to_do():
     assert View.what_to_do() == "Que souhaitez-vous faire ?"
-

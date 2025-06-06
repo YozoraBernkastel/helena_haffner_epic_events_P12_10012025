@@ -5,6 +5,7 @@ from settings.settings import MANAGEMENT, SUPPORT, SALES
 def mock_get_pass(*args, **kwargs):
     return MANAGEMENT_1["password"]
 
+
 q: str = "q"
 question: str = "Est-ce une question ?"
 
