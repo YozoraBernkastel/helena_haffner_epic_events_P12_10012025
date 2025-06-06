@@ -7,14 +7,26 @@ from control.generic_controller import GenericController
 
 
 class SalesController(GenericController):
+    """
+    Controller class use if the user is a seller
+    """
+
     def __init__(self, user: Collaborator):
         self.user: Collaborator = user
 
     def my_customers_list(self) -> None:
+        """
+        Display list of the user's Customers.
+        :return:
+        """
         my_customers_list = Customer.select().where(Customer.collaborator == self.user).execute()
         View.display_customers_detail(my_customers_list)
 
     def customer_creation(self):
+        """
+        Create a customer which will be assigned to the user. The mail need to be unique in the database.
+        :return:
+        """
         is_mail_already_use: bool = True
         customer_mail: str = ""
 
@@ -48,6 +60,11 @@ class SalesController(GenericController):
         View.create_with_success(f"du client {customer_name}")
 
     def customer_modification_detail(self, customer: Customer):
+        """
+        Update an attribue of a Customer object.
+        :param customer: Customer object.
+        :return:
+        """
         choice = View.customer_modification_menu(customer.full_name)
 
         if choice == "1":
@@ -70,6 +87,11 @@ class SalesController(GenericController):
             return
 
     def customer_detail_modification(self) -> None:
+        """
+        Find the wanted customer. If the input correspond to the quit string, return,
+         else go to the customer modification detail menu.
+        :return:
+        """
         customer = self.find_customer(collaborator=self.user)
         if self.is_quitting(customer):
             return
@@ -78,9 +100,18 @@ class SalesController(GenericController):
 
     @staticmethod
     def search_event(contract: Contract):
+        """
+        Return all the event of a given contract.
+        :param contract: contract object.
+        :return: a list of Event objects.
+        """
         return Event.select().where(Event.contract == contract).execute()
 
     def customer_detail(self) -> None:
+        """
+
+        :return:
+        """
         customer: Customer = self.find_customer(collaborator=self.user)
         if self.is_quitting(customer):
             return

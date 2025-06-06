@@ -12,6 +12,10 @@ from settings.settings import MANAGEMENT, SALES
 
 
 class Controller(GenericController):
+    """
+    Controller use as long as the user is unknown.
+    """
+
     def __init__(self):
         self.user: Collaborator | None = None
         self.picture_encoding = PictureEncoding()
@@ -20,6 +24,10 @@ class Controller(GenericController):
         self.init_db()
 
     def first_user_creation(self):
+        """
+        If the dabase is empty, create a first collaborator with the management's role.
+        :return:
+        """
         if Collaborator.select().count() > 0:
             return
 
@@ -33,6 +41,10 @@ class Controller(GenericController):
         View.create_with_success()
 
     def init_db(self):
+        """
+        Create the database if there is none.
+        :return:
+        """
         if not path.exists(db_name):
             Collaborator.create_table()
             Customer.create_table()
@@ -41,6 +53,10 @@ class Controller(GenericController):
             self.first_user_creation()
 
     def log_in(self) -> None:
+        """
+        Ask the user their username and password and get the matching Collaborator from the database
+        :return:
+        """
         while self.user is None:
             username, password = View.connection()
             self.user = Collaborator.find_collaborator(username, password)
@@ -53,6 +69,11 @@ class Controller(GenericController):
 
     @staticmethod
     def find_last_user(last_user_id) -> Collaborator | None:
+        """
+        Check the last registered user and, if there is one, asks the current user if it's their account
+        :param last_user_id:
+        :return:
+        """
         user = Collaborator.find_last_user_session(last_user_id)
 
         if user is None:
@@ -63,6 +84,10 @@ class Controller(GenericController):
         return user if is_user else None
 
     def role_controller(self):
+        """
+        Return the controller's class corresponding to the role of the user.
+        :return:
+        """
         if self.user.role == MANAGEMENT:
             return ManagementController(self.user)
         if self.user.role == SALES:
@@ -71,6 +96,13 @@ class Controller(GenericController):
         return SupportController(self.user)
 
     def display_welcome_menu(self) -> None:
+        """
+        Check if there is an existing token. If it's the case, ask user if it's their account.
+        If there is no token or if it's not the user's account, asks their username and password to find the
+        user corresponding.
+        Finally redirect the user to controller corresponding to their role.
+        :return:
+        """
         token: str = self.picture_decoding.token_getter()
         last_user_id: int = JwtHelper.decode_jwt(token)
 
