@@ -4,6 +4,10 @@ from settings.settings import MAX_ASCII_NUM, SHIFTER
 
 
 class PictureManipulation:
+    """
+    Virtual class given as parent to the encoding and decoding classes.
+    """
+
     def __init__(self):
         self.picture_1_path: str = "pictures/wallpaper_1.png"
         self.picture_2_path: str = "pictures/wallpaper_2.png"
@@ -13,6 +17,11 @@ class PictureManipulation:
 
     @staticmethod
     def import_picture(picture_path: str):
+        """
+        Inport an existing picture.
+        :param picture_path: picture's path.
+        :return: the picture
+        """
         if path.exists(picture_path):
             return Image.open(picture_path, "r")
 
@@ -20,6 +29,11 @@ class PictureManipulation:
         return None
 
     def are_all_pictures_exists(self) -> bool:
+        """
+        Check if all the needed pictures exist.
+        :return:
+        """
+
         def exists(pic_path):
             return path.exists(pic_path)
 

@@ -3,6 +3,10 @@ from settings.settings import ROLES_LIST
 
 
 class ManagementView(View):
+    """
+    View Specific to management role's user.
+    """
+
     @classmethod
     def collab_menu(cls) -> str:
         choices_list: list = ["Créer un collaborateur", "Modifier un collaborateur",

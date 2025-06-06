@@ -3,6 +3,10 @@ from models.db_models import Contract
 
 
 class SalesView(View):
+    """
+    View Specific to sales role's user.
+    """
+
     @classmethod
     def events_menu(cls) -> str:
         choices_list: list = ["Créer un événement", "Voir tous les événements",

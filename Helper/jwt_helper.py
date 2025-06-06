@@ -5,6 +5,10 @@ from datetime import timedelta, datetime, timezone
 
 
 class JwtHelper:
+    """
+    Class used to gererate or to decode a JWT Token.
+    """
+
     @staticmethod
     def __load_jwt_detail() -> tuple[str, str]:
         dotenv.load_dotenv()

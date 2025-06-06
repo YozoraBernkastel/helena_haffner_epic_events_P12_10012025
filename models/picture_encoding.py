@@ -4,6 +4,10 @@ from settings.settings import DATA_FORMAT, DATA_INFO_BINARY_FORMAT, DOT
 
 
 class PictureEncoding(PictureManipulation):
+    """
+    Class use to encode token inside pictures.
+    """
+
     def __init__(self):
         super().__init__()
         self.pictures_list: list = [self.picture_1_path, self.picture_2_path, self.picture_3_path]

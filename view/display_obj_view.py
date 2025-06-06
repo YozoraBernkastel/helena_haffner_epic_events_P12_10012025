@@ -2,6 +2,10 @@ from models.db_models import Collaborator, Customer, Contract, Event
 
 
 class DisplayView:
+    """
+    View used to display information about an object from the database.
+    """
+
     @staticmethod
     def collab_display(collaborator: Collaborator):
         print(f"\n   Nom d'utilisateur : {collaborator.username}")
