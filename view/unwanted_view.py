@@ -1,4 +1,8 @@
 class UnwantedView:
+    """
+    Virtual View Class storing all the "error's message" corresponding to an input of the user.
+    """
+
     @staticmethod
     def unknown_user_or_password() -> None:
         print("Utilisateur ou mot de passe inconnu.")

@@ -4,6 +4,10 @@ from settings.settings import DATA_INFO_LEN, DOT, BINARY_LENGTH
 
 
 class PictureDecoding(PictureManipulation):
+    """
+    Class used to decode the token stored inside the pictures.
+    """
+
     def __init__(self):
         super().__init__()
         self.picture_1_path: str = "pictures/wallpaper_1_.png"

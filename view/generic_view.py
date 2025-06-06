@@ -5,6 +5,10 @@ from settings.settings import MANAGEMENT, SUPPORT, SALES
 
 
 class View(UnwantedView, DisplayView):
+    """
+    Generic view use as the user is unknown then as parent of role views classes.
+    """
+
     @classmethod
     def create_first_user_warning(cls) -> None:
         print("Aucun utilisateur n'existe actuellement dans la base de données.")
@@ -83,6 +87,12 @@ class View(UnwantedView, DisplayView):
 
     @classmethod
     def choice_loop(cls, question: str, choices_list: list) -> str:
+        """
+        While loop displaying the question and the choices as long as the user doesn't do a valid choice.
+        :param question: question to display
+        :param choices_list: choices to display
+        :return: choice of the user
+        """
         check_answer: bool = False
         choice = ""
 

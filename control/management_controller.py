@@ -5,10 +5,18 @@ from settings.settings import SALES, MANAGEMENT, SUPPORT
 
 
 class ManagementController(GenericController):
+    """
+        Controller class use if the user is a manager
+    """
+
     def __init__(self, user: Collaborator):
         self.user: Collaborator = user
 
     def collab_creation(self) -> None:
+        """
+        Create a collaborator with a username missing in the database and a password
+        :return:
+        """
         username, password = self.choose_username_and_password()
         if self.is_quitting(username):
             return
@@ -22,6 +30,11 @@ class ManagementController(GenericController):
         View.create_with_success(f"du collaborateur {username}")
 
     def username_change(self, collaborator: Collaborator) -> None:
+        """
+        Change the username of a user
+        :param collaborator: Collaborator object
+        :return:
+        """
         while True:
             new_username = View.asks_username("à partir de maintenant")
 
@@ -36,6 +49,11 @@ class ManagementController(GenericController):
             View.username_already_used(new_username)
 
     def role_change(self, collaborator: Collaborator) -> None:
+        """
+        Change the role of the user in arg
+        :param collaborator: Collaborator object
+        :return:
+        """
         new_role = View.asks_role(modification=True)
 
         if not self.is_quitting(new_role):
@@ -43,10 +61,20 @@ class ManagementController(GenericController):
             View.modification_done()
 
     def check_user_password(self):
+        """
+        Asks the user password and compare it with the one in the database.
+        If the Collaborator is found, the password is the same
+        :return:
+        """
         user_password = View.asks_actual_password()
         return Collaborator.find_collaborator(self.user.username, user_password) is not None
 
     def password_reset(self, collaborator: Collaborator) -> None:
+        """
+        Modifiy the actual password of the Collaborator account
+        :param collaborator: Collaborator object
+        :return:
+        """
         if not View.reset_collab_password(collaborator.username):
             return
 
@@ -56,6 +84,10 @@ class ManagementController(GenericController):
             View.password_updated()
 
     def collab_modification(self) -> None:
+        """
+        Menu redirecting to the wanted modification for a Collaborator object.
+        :return:
+        """
         username = View.asks_username("à modifier")
         if self.is_quitting(username):
             return
@@ -78,6 +110,11 @@ class ManagementController(GenericController):
             return
 
     def customer_reattribution(self, collaborator: Collaborator) -> bool:
+        """
+        Give to a valid collaborator (sales role only) all Customers of the Collaborator in args of the function
+        :param collaborator: Collaborator object
+        :return:
+        """
         all_customers = Customer.select().where(Customer.collaborator == collaborator).execute()
 
         for customer in all_customers:
@@ -87,6 +124,11 @@ class ManagementController(GenericController):
 
     @staticmethod
     def event_reattribution(collaborator) -> bool:
+        """
+        Give to a valid collaborator (support role only) all Event of the Collaborator in args of the function
+        :param collaborator: Collaborator object
+        :return:
+        """
         if not View.events_will_loose_support():
             return False
 
@@ -96,6 +138,11 @@ class ManagementController(GenericController):
         return True
 
     def database_reorganisation(self, collaborator: Collaborator) -> bool:
+        """
+        Reattribute customers or events, according to the collaborator in argument, to a new one.
+        :param collaborator:
+        :return:
+        """
         if collaborator.role == SALES:
             return self.customer_reattribution(collaborator)
         elif collaborator.role == SUPPORT:
@@ -104,6 +151,10 @@ class ManagementController(GenericController):
             return True
 
     def collab_deletion(self):
+        """
+        Delete a collaborator from the database.
+        :return:
+        """
         username = View.asks_username("à supprimer")
         if self.is_quitting(username):
             return
@@ -126,6 +177,10 @@ class ManagementController(GenericController):
             View.deletion_complete()
 
     def choose_role_menu(self):
+        """
+        Display all the collaborator according to the asked role.
+        :return:
+        """
         role = View.which_role()
         if self.is_quitting(role):
             return
@@ -134,6 +189,10 @@ class ManagementController(GenericController):
         [View.collab_display(collab) for collab in collab_list]
 
     def collab_list(self):
+        """
+        Ask and display the ask list of collaborator profil
+        :return:
+        """
         choice = View.collab_list_menu()
         if choice == "1":
             self.all_collab_list()
@@ -143,6 +202,11 @@ class ManagementController(GenericController):
             return
 
     def collab_menu(self) -> None:
+        """
+        Ask user which type of interaction they want with the Collaborator Model
+        and redirect them according to their choice.
+        :return:
+        """
         choice = View.collab_menu()
 
         if choice == "1":
@@ -157,6 +221,10 @@ class ManagementController(GenericController):
             return
 
     def contract_creation(self):
+        """
+        Create a new contract with a unique name (unknown in the database)
+        :return:
+        """
         while True:
             contract_name: str = View.asks_contract_name()
             if self.is_quitting(contract_name):
@@ -179,6 +247,11 @@ class ManagementController(GenericController):
 
     @classmethod
     def delete_contract(cls, user: Collaborator) -> None:
+        """
+        Delete an existing contract from the database.
+        :param user:
+        :return:
+        """
         contract: Contract | str = cls.find_contract()
         if cls.is_quitting(contract):
             return
@@ -188,6 +261,10 @@ class ManagementController(GenericController):
             View.deletion_complete()
 
     def contracts_menu(self) -> None:
+        """
+        Ask user which type of interaction they want with the Contract Model and redirect them.
+        :return:
+        """
         choice = View.contract_menu()
 
         if choice == "1":
@@ -205,6 +282,10 @@ class ManagementController(GenericController):
             return
 
     def change_event_collab(self):
+        """
+        Change the collaborator (support role only) of an event.
+        :return:
+        """
         event: Event | str = self.find_event()
         if self.is_quitting(event):
             return
@@ -218,6 +299,10 @@ class ManagementController(GenericController):
         View.modification_done()
 
     def event_menu(self):
+        """
+        Display Event Menu and redirect base on user choice
+        :return:
+        """
         choice = View.event_menu_display()
 
         if choice == "1":
@@ -228,6 +313,11 @@ class ManagementController(GenericController):
             self.change_event_collab()
 
     def home_menu(self) -> None:
+        """
+        First Menu after role identification. Ask user if they want to take the path concerning collaborators, contracts
+        events, customer or of their account.
+        :return:
+        """
         while True:
             choice = View.menu()
 

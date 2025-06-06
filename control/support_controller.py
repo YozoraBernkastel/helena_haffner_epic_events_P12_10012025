@@ -4,14 +4,27 @@ from models.db_models import Collaborator, Event
 
 
 class SupportController(GenericController):
+    """
+        Controller class use if the user has the role of support.
+        """
+
     def __init__(self, user: Collaborator):
         self.user: Collaborator = user
 
     def all_my_events(self) -> None:
+        """
+        Display all the Events of the user
+        :return:
+        """
         my_events = Event.select().where(Event.support == self.user).execute()
         [View.event_display(event) for event in my_events]
 
     def event_modification(self, event: Event) -> None:
+        """
+        Update an attribute of an Event.
+        :param event: Event object to update.
+        :return:
+        """
         choice = View.event_modification_menu(event.name)
 
         if choice == "1":
@@ -35,6 +48,10 @@ class SupportController(GenericController):
             return
 
     def modify_event(self) -> None:
+        """
+        Find the Event to update.
+        :return:
+        """
         event: Event | None = self.find_event()
         if not isinstance(event, Event):
             View.modification_canceled()
@@ -43,6 +60,10 @@ class SupportController(GenericController):
         self.event_modification(event)
 
     def event_menu(self) -> None:
+        """
+        Menu to interact with an Event object.
+        :return:
+        """
         choice = View.event_menu()
 
         if choice == "1":
@@ -59,6 +80,10 @@ class SupportController(GenericController):
             return
 
     def home_menu(self) -> None:
+        """
+                First menu of a Collaborator identified with the role of support.
+        :return:
+        """
         while True:
             choice = View.menu()
 

@@ -2,6 +2,9 @@ from view.generic_view import View
 
 
 class SupportView(View):
+    """
+        View Specific to support role's user.
+        """
 
     @classmethod
     def event_modification_menu(cls, event_name: str):
