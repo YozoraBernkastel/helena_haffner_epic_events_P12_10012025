@@ -70,5 +70,3 @@ class SupportController(GenericController):
                 self.all_contracts_list()
             else:
                 return
-
-

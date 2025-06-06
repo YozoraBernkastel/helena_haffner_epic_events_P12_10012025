@@ -25,10 +25,7 @@ def test_collab_interactions(management_controller, monkeypatch):
     new_collab = Collaborator.get_or_none(username=TO_CREATE_COLLAB["username"])
     assert first_role != new_collab.role
 
-    #delete collab
+    # delete collab
     management_controller.home_menu()
     new_collab = Collaborator.get_or_none(username=TO_CREATE_COLLAB["username"])
     assert new_collab is None
-
-
-

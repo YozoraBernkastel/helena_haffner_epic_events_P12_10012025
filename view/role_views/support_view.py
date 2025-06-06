@@ -33,11 +33,3 @@ class SupportView(View):
         choices_list: list = ["Voir les Événements", "Voir tous les Clients", "Voir les contrats"]
 
         return cls.choice_loop(cls.what_to_do(), choices_list)
-
-
-
-
-
-
-
-

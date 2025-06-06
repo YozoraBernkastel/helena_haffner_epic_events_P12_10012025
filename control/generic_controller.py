@@ -108,7 +108,7 @@ class GenericController:
             date = [int(num) for num in date]
             hour = [int(num) for num in hour]
             return datetime(date[2], date[1], date[0], hour[0], hour[1])
-        except:
+        except Exception:
             print("Cette date n'existe pas.")
             return None
 

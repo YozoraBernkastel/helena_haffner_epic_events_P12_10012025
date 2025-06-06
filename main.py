@@ -10,6 +10,7 @@ def call_sentry():
             send_default_pii=True,
         )
 
+
 def main():
     call_sentry()
     controller = Controller()

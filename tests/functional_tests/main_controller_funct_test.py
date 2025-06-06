@@ -34,5 +34,3 @@ def test_log_in(monkeypatch):
 
     controller.log_in()
     assert controller.user.username == MANAGEMENT_1["username"]
-
-

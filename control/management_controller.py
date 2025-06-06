@@ -243,4 +243,3 @@ class ManagementController(GenericController):
                 self.account_menu(self.user)
             else:
                 return
-

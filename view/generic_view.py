@@ -137,7 +137,7 @@ class View(UnwantedView, DisplayView):
             float_price: float = float(price)
             assert float_price >= 0.00
             return float_price
-        except:
+        except Exception:
             print("Erreur dans le montant.")
             return cls.error_price()
 
